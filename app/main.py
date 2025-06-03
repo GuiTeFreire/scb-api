@@ -8,4 +8,4 @@ app = FastAPI(
 
 @app.get("/", tags=["Root"])
 def read_root():
-    return {"message": "Alô mundo do SCB!"}
+    return {"message": "Alô mundo!"}
