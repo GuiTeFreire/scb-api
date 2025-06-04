@@ -57,3 +57,24 @@ def test_numero_cartao_invalido():
     payload = build_payload(cpf="12345678901", numero_cartao="abcd1234")
     response = client.post("/ciclista", json=payload)
     assert response.status_code == 422
+
+def test_cvv_invalido():
+    payload = {
+        "ciclista": {
+            "nome": "CVV Inválido",
+            "nascimento": "1995-01-01",
+            "cpf": "12345678901",
+            "nacionalidade": "BRASILEIRO",
+            "email": "cvv@erro.com",
+            "senha": "senha123",
+            "urlFotoDocumento": "https://example.com/doc.png"
+        },
+        "meioDePagamento": {
+            "nomeTitular": "CVV Inválido",
+            "numero": "4111111111111111",
+            "validade": "2026-12-31",
+            "cvv": "12"  # inválido: só 2 dígitos
+        }
+    }
+    response = client.post("/ciclista", json=payload)
+    assert response.status_code == 422
