@@ -1,4 +1,7 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, Request, HTTPException
+from fastapi.responses import JSONResponse
+from fastapi.exceptions import RequestValidationError
+from app.api import ciclista
 
 app = FastAPI(
     title="SCB - Sistema de Controle de Bicicletário",
@@ -6,6 +9,23 @@ app = FastAPI(
     version="1.0.0"
 )
 
-@app.get("/", tags=["Root"])
-def read_root():
-    return {"message": "Alô mundo!"}
+app.include_router(ciclista.router)
+
+@app.exception_handler(RequestValidationError)
+async def validation_exception_handler(request: Request, exc: RequestValidationError):
+    return JSONResponse(
+        status_code=422,
+        content=[
+            {"codigo": "422", "mensagem": "Dados Inválidos"}
+        ]
+    )
+
+@app.exception_handler(HTTPException)
+async def http_exception_handler(request: Request, exc: HTTPException):
+    return JSONResponse(
+        status_code=exc.status_code,
+        content={
+            "codigo": str(exc.status_code),
+            "mensagem": exc.detail or "Erro inesperado"
+        }
+    )
