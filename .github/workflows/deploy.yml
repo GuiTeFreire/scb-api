@@ -1,35 +1,46 @@
-name: Deploy para EC2
+name: Deploy to EC2 (Docker)
 
 on:
   push:
-    branches: [main]
+    branches:
+      - main
 
 jobs:
   deploy:
+    name: Deploy API to EC2 via SCP and SSH
     runs-on: ubuntu-latest
 
     steps:
-      - name: Copiar arquivos via SSH
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Copy code to EC2 via SCP
         uses: appleboy/scp-action@v0.1.3
         with:
-          host: 15.228.249.205
-          username: ubuntu
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USER }}
           key: ${{ secrets.EC2_SSH_KEY }}
           source: "."
           target: "~/scb-api"
 
-      - name: Executar comandos remotos
-        uses: appleboy/ssh-action@v0.1.10
+      - name: SSH into EC2 and deploy
+        uses: appleboy/ssh-action@v1.0.3
         with:
-          host: 15.228.249.205
-          username: ubuntu
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USER }}
           key: ${{ secrets.EC2_SSH_KEY }}
           script: |
             cd ~/scb-api
-            git reset --hard HEAD
-            git pull origin main
-            python3 -m venv venv || true
-            source venv/bin/activate
-            pip install -r requirements.txt
-            fuser -k 8000/tcp || true
-            nohup uvicorn app.main:app --host 0.0.0.0 --port 8000 > log.txt 2>&1 &
+
+            # Para e remove container anterior (se existir)
+            docker stop scb-aluguel || true
+            docker rm scb-aluguel || true
+
+            # Remove imagem antiga (opcional)
+            docker rmi scb-api || true
+
+            # Builda nova imagem
+            docker build -t scb-api .
+
+            # Sobe novo container com nome fixo
+            docker run -d -p 8000:8000 --name scb-aluguel scb-api
