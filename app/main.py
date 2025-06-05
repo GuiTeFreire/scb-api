@@ -9,11 +9,6 @@ app = FastAPI(
     version="1.0.0"
 )
 
-
-@app.get("/", summary="Alô mundo!", tags=["Root"])
-def read_root():
-    return {"message": "Alô mundo!"}
-
 app.include_router(ciclista.router)
 
 @app.exception_handler(RequestValidationError)
