@@ -18,7 +18,7 @@ jobs:
           source: "."
           target: "~/scb-api"
 
-      - name: Executar deploy remoto via SSH
+      - name: Executar comandos remotos
         uses: appleboy/ssh-action@v0.1.10
         with:
           host: 15.228.249.205
@@ -28,8 +28,8 @@ jobs:
             cd ~/scb-api
             git reset --hard HEAD
             git pull origin main
-            source venv/bin/activate || python3 -m venv venv && source venv/bin/activate
+            python3 -m venv venv || true
+            source venv/bin/activate
             pip install -r requirements.txt
             fuser -k 8000/tcp || true
             nohup uvicorn app.main:app --host 0.0.0.0 --port 8000 > log.txt 2>&1 &
-            echo "Deploy concluído com sucesso!"
