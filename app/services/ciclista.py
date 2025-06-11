@@ -27,3 +27,13 @@ def cadastrar_ciclista(payload: RequisicaoCadastroCiclista) -> Ciclista:
     fake_db["ciclistas"].append(novo)
     current_id += 1
     return Ciclista(**novo)
+
+def buscar_ciclista_por_id(id_ciclista: int) -> Ciclista:
+    for c in fake_db["ciclistas"]:
+        if c["id"] == id_ciclista:
+            return Ciclista(**c)
+
+    raise HTTPException(
+        status_code=404,
+        detail="Ciclista não encontrado"
+    )

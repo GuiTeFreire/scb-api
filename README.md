@@ -1,6 +1,6 @@
 # Microsserviço de Aluguel - SCB
 
-Este microsserviço é responsável pela **gestão de ciclistas, funcionários, cartões de crédito e operações de aluguel e devolução de bicicletas** no Sistema de Controle de Bicicletário (SCB).
+Este microsserviço é responsável pela **gestão de ciclistas e seus cartões de crédito, funcionários e operações de aluguel e devolução de bicicletas** no Sistema de Controle de Bicicletário (SCB).
 
 ## Funcionalidades
 

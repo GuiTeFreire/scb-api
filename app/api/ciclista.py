@@ -1,7 +1,7 @@
-from fastapi import APIRouter, status
+from fastapi import APIRouter, status, Path
 from app.models.ciclista import RequisicaoCadastroCiclista, CiclistaResposta
 from app.models.erro import Erro
-from app.services.ciclista import cadastrar_ciclista
+from app.services.ciclista import cadastrar_ciclista, buscar_ciclista_por_id
 
 router = APIRouter()
 
@@ -18,3 +18,17 @@ router = APIRouter()
 )
 def post_ciclista(payload: RequisicaoCadastroCiclista):
     return cadastrar_ciclista(payload)
+
+@router.get(
+    "/ciclista/{idCiclista}",
+    response_model=CiclistaResposta,
+    summary="Recupera dados de um ciclista",
+    status_code=status.HTTP_200_OK,
+    tags=["Aluguel"],
+    responses={
+        404: {"description": "Requisição mal formada", "model": Erro},
+        422: {"description": "Dados Inválidos", "model": list[Erro]},
+    }
+)
+def get_ciclista(idCiclista: int = Path(..., gt=0)):
+    return buscar_ciclista_por_id(idCiclista)
