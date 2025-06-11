@@ -4,7 +4,6 @@ from app.main import app
 client = TestClient(app)
 
 def test_email_existe_true():
-    # Cadastra um ciclista com e-mail conhecido
     payload = {
         "ciclista": {
             "nome": "Teste Email",
@@ -26,7 +25,6 @@ def test_email_existe_true():
     response = client.post("/ciclista", json=payload)
     assert response.status_code == 201
 
-    # Verifica existência
     check = client.get("/ciclista/existeEmail/email@existe.com")
     assert check.status_code == 200
     assert check.json() is True

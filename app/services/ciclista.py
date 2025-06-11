@@ -4,23 +4,22 @@ from app.models.ciclista import RequisicaoCadastroCiclista, Ciclista, EdicaoCicl
 fake_db = {"ciclistas": []}
 current_id = 1
 
+def email_existe(email: str) -> bool:
+    return any(c["email"] == email for c in fake_db["ciclistas"])
+
 def cadastrar_ciclista(payload: RequisicaoCadastroCiclista) -> Ciclista:
     global current_id
 
     cic = payload.ciclista
+
+    if email_existe(cic.email):
+        raise HTTPException(status_code=422, detail="E-mail já cadastrado")
 
     if (cic.cpf and cic.passaporte) or (not cic.cpf and not cic.passaporte):
         raise HTTPException(
             status_code=422,
             detail="Informe apenas CPF ou Passaporte, e apenas um dos dois."
         )
-
-    for c in fake_db["ciclistas"]:
-        if c["email"] == cic.email:
-            raise HTTPException(
-                status_code=422,
-                detail="E-mail já cadastrado"
-            )
 
     novo = cic.model_dump()
     novo.update({"id": current_id, "status": "AGUARDANDO_CONFIRMACAO"})
@@ -49,5 +48,3 @@ def atualizar_ciclista(idCiclista: int, dados: EdicaoCiclista) -> Ciclista:
 
     raise HTTPException(status_code=404)
 
-def email_existe(email: str) -> bool:
-    return any(c["email"] == email for c in fake_db["ciclistas"])

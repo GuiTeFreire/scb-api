@@ -47,9 +47,7 @@ def test_ausencia_de_cpf_e_passaporte():
 
 def test_email_duplicado():
     payload = build_payload(cpf="12345678901", email="joao@duplicado.com")
-    # Primeiro cadastro
     client.post("/ciclista", json=payload)
-    # Segundo com mesmo email
     response = client.post("/ciclista", json=payload)
     assert response.status_code == 422
 
@@ -73,7 +71,7 @@ def test_cvv_invalido():
             "nomeTitular": "CVV Inválido",
             "numero": "4111111111111111",
             "validade": "2026-12-31",
-            "cvv": "12"  # inválido: só 2 dígitos
+            "cvv": "12"
         }
     }
     response = client.post("/ciclista", json=payload)

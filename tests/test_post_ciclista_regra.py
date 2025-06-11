@@ -39,12 +39,11 @@ def test_erro_sem_cpf_e_sem_passaporte():
     assert response.status_code == 422
 
 def test_erro_email_duplicado():
-    # 1ª vez deve funcionar
     payload = build_payload(cpf="98765432100", email="duplicado@regra.com")
+
     response1 = client.post("/ciclista", json=payload)
     assert response1.status_code == 201
 
-    # 2ª vez com mesmo e-mail
     response2 = client.post("/ciclista", json=payload)
     assert response2.status_code == 422
 
@@ -52,4 +51,3 @@ def test_erro_cartao_numero_invalido():
     payload = build_payload(cpf="12312312399", email="cartao@regra.com", numero="abcdefg")
     response = client.post("/ciclista", json=payload)
     assert response.status_code == 422
-    # O erro será lançado pelo validador de tipos Pydantic para 'numero'

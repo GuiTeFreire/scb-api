@@ -4,7 +4,6 @@ from app.main import app
 client = TestClient(app)
 
 def test_edicao_ciclista_com_sucesso():
-    # Cadastra um ciclista primeiro
     payload = {
         "ciclista": {
             "nome": "Ana Original",
@@ -27,7 +26,6 @@ def test_edicao_ciclista_com_sucesso():
     assert post_resp.status_code == 201
     id_ciclista = post_resp.json()["id"]
 
-    # Faz a edição
     novo_dados = {
         "nome": "Ana Editada",
         "nascimento": "1992-03-10",
@@ -41,7 +39,7 @@ def test_edicao_ciclista_com_sucesso():
     assert put_resp.status_code == 200
     assert put_resp.json()["nome"] == "Ana Editada"
     assert put_resp.json()["email"] == "ana-editada@teste.com"
-    assert "senha" not in put_resp.json()  # Não deve retornar senha
+    assert "senha" not in put_resp.json()
 
 def test_edicao_ciclista_inexistente():
     payload = {
