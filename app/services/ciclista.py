@@ -1,5 +1,5 @@
 from fastapi import HTTPException
-from app.models.ciclista import RequisicaoCadastroCiclista, Ciclista, NovoCiclista
+from app.models.ciclista import RequisicaoCadastroCiclista, Ciclista, EdicaoCiclista
 
 fake_db = {"ciclistas": []}
 current_id = 1
@@ -8,9 +8,6 @@ def cadastrar_ciclista(payload: RequisicaoCadastroCiclista) -> Ciclista:
     global current_id
 
     cic = payload.ciclista
-
-    if not cic.senha:
-        raise HTTPException(status_code=422, detail="Campo 'senha' é obrigatório no cadastro.")
 
     if (cic.cpf and cic.passaporte) or (not cic.cpf and not cic.passaporte):
         raise HTTPException(
@@ -41,7 +38,7 @@ def buscar_ciclista_por_id(id_ciclista: int) -> Ciclista:
         detail="Ciclista não encontrado"
     )
 
-def atualizar_ciclista(id_ciclista: int, dados: NovoCiclista) -> Ciclista:
+def atualizar_ciclista(id_ciclista: int, dados: EdicaoCiclista) -> Ciclista:
     for cic in fake_db["ciclistas"]:
         if cic["id"] == id_ciclista:
             if (dados.cpf and dados.passaporte) or (not dados.cpf and not dados.passaporte):

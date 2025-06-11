@@ -2,7 +2,7 @@ from fastapi import APIRouter, status, Path
 from app.models.ciclista import RequisicaoCadastroCiclista, CiclistaResposta
 from app.models.erro import Erro
 from app.services.ciclista import cadastrar_ciclista, buscar_ciclista_por_id, atualizar_ciclista
-from app.models.ciclista import NovoCiclista
+from app.models.ciclista import EdicaoCiclista
 
 router = APIRouter()
 
@@ -39,12 +39,11 @@ def get_ciclista(idCiclista: int = Path(..., gt=0)):
     response_model=CiclistaResposta,
     summary="Alterar dados de um ciclista",
     tags=["Aluguel"],
-    status_code=200,
     responses={
         200: {"description": "Dados atualizados"},
         422: {"description": "Dados Inválidos", "model": list[Erro]},
         404: {"description": "Não encontrado", "model": Erro}
     }
 )
-def put_ciclista(idCiclista: int, payload: NovoCiclista):
+def put_ciclista(idCiclista: int, payload: EdicaoCiclista):
     return atualizar_ciclista(idCiclista, payload)

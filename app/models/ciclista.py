@@ -60,3 +60,12 @@ class CiclistaResposta(BaseModel):
     nacionalidade: NacionalidadeEnum
     email: EmailStr
     urlFotoDocumento: Optional[str] = None
+
+class EdicaoCiclista(BaseModel):
+    nome: str
+    nascimento: date
+    cpf: Optional[str] = None
+    passaporte: Optional[Passaporte] = None
+    nacionalidade: NacionalidadeEnum
+    email: EmailStr
+    urlFotoDocumento: Optional[str] = None
