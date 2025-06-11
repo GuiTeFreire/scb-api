@@ -31,8 +31,8 @@ def post_ciclista(payload: RequisicaoCadastroCiclista):
         422: {"description": "Dados Inválidos", "model": list[Erro]},
     }
 )
-def get_ciclista(idCiclista: int = Path(..., gt=0)):
-    return buscar_ciclista_por_id(idCiclista)
+def get_ciclista(id_ciclista: int = Path(..., gt=0, alias="idCiclista")):
+    return buscar_ciclista_por_id(id_ciclista)
 
 @router.put(
     "/ciclista/{idCiclista}",
@@ -45,8 +45,8 @@ def get_ciclista(idCiclista: int = Path(..., gt=0)):
         404: {"description": "Não encontrado", "model": Erro}
     }
 )
-def put_ciclista(idCiclista: int, payload: EdicaoCiclista):
-    return atualizar_ciclista(idCiclista, payload)
+def put_ciclista(payload: EdicaoCiclista, id_ciclista: int = Path(..., alias="idCiclista")):
+    return atualizar_ciclista(id_ciclista, payload)
 
 @router.get(
     "/ciclista/existeEmail/{email}",
