@@ -28,9 +28,9 @@ def cadastrar_ciclista(payload: RequisicaoCadastroCiclista) -> Ciclista:
     current_id += 1
     return Ciclista(**novo)
 
-def buscar_ciclista_por_id(id_ciclista: int) -> Ciclista:
+def buscar_ciclista_por_id(idCiclista: int) -> Ciclista:
     for c in fake_db["ciclistas"]:
-        if c["id"] == id_ciclista:
+        if c["id"] == idCiclista:
             return Ciclista(**c)
 
     raise HTTPException(
@@ -38,9 +38,9 @@ def buscar_ciclista_por_id(id_ciclista: int) -> Ciclista:
         detail="Ciclista não encontrado"
     )
 
-def atualizar_ciclista(id_ciclista: int, dados: EdicaoCiclista) -> Ciclista:
+def atualizar_ciclista(idCiclista: int, dados: EdicaoCiclista) -> Ciclista:
     for cic in fake_db["ciclistas"]:
-        if cic["id"] == id_ciclista:
+        if cic["id"] == idCiclista:
             if (dados.cpf and dados.passaporte) or (not dados.cpf and not dados.passaporte):
                 raise HTTPException(status_code=422)
 
@@ -48,3 +48,6 @@ def atualizar_ciclista(id_ciclista: int, dados: EdicaoCiclista) -> Ciclista:
             return Ciclista(**cic)
 
     raise HTTPException(status_code=404)
+
+def email_existe(email: str) -> bool:
+    return any(c["email"] == email for c in fake_db["ciclistas"])

@@ -1,7 +1,7 @@
-from fastapi import APIRouter, status, Path
+from fastapi import APIRouter, status, Path, HTTPException
 from app.models.ciclista import RequisicaoCadastroCiclista, CiclistaResposta
 from app.models.erro import Erro
-from app.services.ciclista import cadastrar_ciclista, buscar_ciclista_por_id, atualizar_ciclista
+from app.services.ciclista import cadastrar_ciclista, buscar_ciclista_por_id, atualizar_ciclista, email_existe
 from app.models.ciclista import EdicaoCiclista
 
 router = APIRouter()
@@ -47,3 +47,19 @@ def get_ciclista(idCiclista: int = Path(..., gt=0)):
 )
 def put_ciclista(idCiclista: int, payload: EdicaoCiclista):
     return atualizar_ciclista(idCiclista, payload)
+
+@router.get(
+    "/ciclista/existeEmail/{email}",
+    summary="Verifica se o e-mail já foi utilizado por algum ciclista.",
+    tags=["Aluguel"],
+    response_model=bool,
+    responses={
+        200: {"description": "True caso exista o email e false caso contrario."},
+        422: {"description": "Dados Inválidos", "model": list[Erro]},
+        400: {"description": "Email não enviado como parâmetro", "model": Erro}
+    }
+)
+def get_email_existe(email: str = Path(..., title="Email do ciclista")):
+    if not email:
+        raise HTTPException(status_code=400, detail="Email não enviado como parâmetro")
+    return email_existe(email)
