@@ -60,6 +60,4 @@ def put_ciclista(payload: EdicaoCiclista, id_ciclista: int = Path(..., alias="id
     }
 )
 def get_email_existe(email: str = Path(..., title="Email do ciclista")):
-    if not email:
-        raise HTTPException(status_code=400, detail="Email não enviado como parâmetro")
-    return email_existe(email)
+  return email_existe(email)
