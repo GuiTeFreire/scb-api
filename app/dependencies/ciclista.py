@@ -3,6 +3,7 @@ from app.use_cases.atualizar_ciclista import AtualizarCiclista
 from app.use_cases.cadastrar_ciclista import CadastrarCiclista
 from app.use_cases.verificar_email_existente import VerificarEmailExistente
 from app.infra.repositories.fake_ciclista_repository import FakeCiclistaRepository
+from app.use_cases.ativar_ciclista import AtivarCiclista
 
 repo = FakeCiclistaRepository()
 
@@ -17,3 +18,6 @@ def get_cadastrar_ciclista_use_case():
 
 def get_verificar_email_use_case():
     return VerificarEmailExistente(repo)
+
+def get_ativar_ciclista_uc() -> AtivarCiclista:
+    return AtivarCiclista(repository=repo)

@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 from typing import Optional
-from app.domain.models.ciclista import Ciclista
+from app.domain.entities.ciclista import Ciclista
 
 class CiclistaRepository(ABC):
     @abstractmethod

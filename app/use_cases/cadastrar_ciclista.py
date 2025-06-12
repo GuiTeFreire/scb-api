@@ -1,5 +1,5 @@
 from fastapi import HTTPException
-from app.domain.models.ciclista import Ciclista
+from app.domain.entities.ciclista import Ciclista
 from app.domain.repositories.ciclista_repository import CiclistaRepository
 
 class CadastrarCiclista:

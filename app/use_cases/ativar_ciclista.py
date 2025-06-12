@@ -1,8 +1,8 @@
 from fastapi import HTTPException
-from app.domain.entities.ciclista import Ciclista
 from app.domain.repositories.ciclista_repository import CiclistaRepository
+from app.domain.entities.ciclista import Ciclista
 
-class BuscarCiclistaPorId:
+class AtivarCiclista:
     def __init__(self, repository: CiclistaRepository):
         self.repository = repository
 
@@ -10,4 +10,6 @@ class BuscarCiclistaPorId:
         ciclista = self.repository.buscar_por_id(id_ciclista)
         if not ciclista:
             raise HTTPException(status_code=404, detail="Ciclista não encontrado")
-        return ciclista
+
+        ciclista.status = "ATIVO"
+        return self.repository.atualizar(id_ciclista, ciclista.model_dump())

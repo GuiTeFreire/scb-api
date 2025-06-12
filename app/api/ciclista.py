@@ -1,18 +1,20 @@
-from fastapi import APIRouter, status, Depends, Path
-from app.domain.models.erro import Erro
-from app.domain.models.ciclista import RequisicaoCadastroCiclista, CiclistaResposta, NovoCiclista
+from fastapi import APIRouter, status, Depends, Path, Header
+from app.domain.entities.erro import Erro
+from app.domain.entities.ciclista import RequisicaoCadastroCiclista, CiclistaResposta, NovoCiclista
 from app.infra.repositories.fake_ciclista_repository import FakeCiclistaRepository
 from app.use_cases.cadastrar_ciclista import CadastrarCiclista
-from app.domain.models.ciclista import Ciclista
+from app.domain.entities.ciclista import Ciclista
 from app.use_cases.buscar_ciclista_por_id import BuscarCiclistaPorId
 from app.use_cases.atualizar_ciclista import AtualizarCiclista
-from app.domain.models.ciclista import EdicaoCiclista
+from app.domain.entities.ciclista import EdicaoCiclista
 from app.use_cases.verificar_email_existente import VerificarEmailExistente
+from app.use_cases.ativar_ciclista import AtivarCiclista
 from app.dependencies.ciclista import (
     get_buscar_ciclista_use_case,
     get_atualizar_ciclista_use_case,
     get_cadastrar_ciclista_use_case,
-    get_verificar_email_use_case
+    get_verificar_email_use_case,
+    get_ativar_ciclista_uc
 )
 
 router = APIRouter()
@@ -74,6 +76,24 @@ def put_ciclista(
 ):
     cic = use_case.execute(id_ciclista, payload)
     return CiclistaResposta(**cic.model_dump())
+
+@router.post(
+    "/ciclista/{idCiclista}/ativar",
+    response_model=CiclistaResposta,
+    summary="Ativar conta de ciclista",
+    tags=["Aluguel"],
+    responses={
+        200: {"description": "Ciclista ativado"},
+        404: {"description": "Não encontrado", "model": Erro},
+        422: {"description": "Dados Inválidos", "model": list[Erro]},
+    }
+)
+def ativar_ciclista(
+    idCiclista: int,
+    x_id_requisicao: int = Header(default=None, alias="x-id-requisicao"),
+    uc: AtivarCiclista = Depends(get_ativar_ciclista_uc)
+):
+    return uc.execute(idCiclista)
 
 @router.get(
     "/ciclista/existeEmail/{email}",

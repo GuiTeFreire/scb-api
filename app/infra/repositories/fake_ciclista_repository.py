@@ -1,5 +1,5 @@
 from typing import List, Optional
-from app.domain.models.ciclista import Ciclista
+from app.domain.entities.ciclista import Ciclista
 from app.domain.repositories.ciclista_repository import CiclistaRepository
 
 class FakeCiclistaRepository(CiclistaRepository):
