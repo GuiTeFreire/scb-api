@@ -89,11 +89,11 @@ def put_ciclista(
     }
 )
 def ativar_ciclista(
-    idCiclista: int,
+    id_ciclista: int = Path(..., alias="idCiclista"),
     x_id_requisicao: int = Header(default=None, alias="x-id-requisicao"),
     uc: AtivarCiclista = Depends(get_ativar_ciclista_uc)
 ):
-    return uc.execute(idCiclista)
+    return uc.execute(id_ciclista)
 
 @router.get(
     "/ciclista/existeEmail/{email}",
