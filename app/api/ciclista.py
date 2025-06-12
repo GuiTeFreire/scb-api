@@ -80,7 +80,7 @@ def put_ciclista(
 @router.post(
     "/ciclista/{idCiclista}/ativar",
     response_model=CiclistaResposta,
-    summary="Ativar conta de ciclista",
+    summary="Ativar cadastro do ciclista",
     tags=["Aluguel"],
     responses={
         200: {"description": "Ciclista ativado"},

@@ -29,3 +29,8 @@ def test_ativar_ciclista_sucesso():
     ativar = client.post(f"/ciclista/{id_ciclista}/ativar")
     assert ativar.status_code == 200
     assert ativar.json()["status"] == "ATIVO"
+
+def test_ativar_ciclista_inexistente():
+    res = client.post("/ciclista/99999/ativar")
+    assert res.status_code == 404
+    assert res.json()["mensagem"] == "Ciclista não encontrado"
