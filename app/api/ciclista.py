@@ -1,10 +1,23 @@
-from fastapi import APIRouter, status, Path, HTTPException
-from app.models.ciclista import RequisicaoCadastroCiclista, CiclistaResposta
-from app.models.erro import Erro
-from app.services.ciclista import cadastrar_ciclista, buscar_ciclista_por_id, atualizar_ciclista, email_existe
-from app.models.ciclista import EdicaoCiclista
+from fastapi import APIRouter, status, Depends, Path
+from app.domain.models.erro import Erro
+from app.domain.models.ciclista import RequisicaoCadastroCiclista, CiclistaResposta, NovoCiclista
+from app.infra.repositories.fake_ciclista_repository import FakeCiclistaRepository
+from app.use_cases.cadastrar_ciclista import CadastrarCiclista
+from app.domain.models.ciclista import Ciclista
+from app.use_cases.buscar_ciclista_por_id import BuscarCiclistaPorId
+from app.use_cases.atualizar_ciclista import AtualizarCiclista
+from app.domain.models.ciclista import EdicaoCiclista
+from app.use_cases.verificar_email_existente import VerificarEmailExistente
+from app.dependencies.ciclista import (
+    get_buscar_ciclista_use_case,
+    get_atualizar_ciclista_use_case,
+    get_cadastrar_ciclista_use_case,
+    get_verificar_email_use_case
+)
 
 router = APIRouter()
+
+repo = FakeCiclistaRepository()
 
 @router.post(
     "/ciclista",
@@ -17,8 +30,13 @@ router = APIRouter()
         404: {"description": "Requisição mal formada", "model": Erro}
     }
 )
-def post_ciclista(payload: RequisicaoCadastroCiclista):
-    return cadastrar_ciclista(payload)
+def post_ciclista(
+    payload: RequisicaoCadastroCiclista,
+    use_case: CadastrarCiclista = Depends(get_cadastrar_ciclista_use_case)
+):
+    ciclista = NovoCiclista(**payload.ciclista.model_dump())
+    novo = Ciclista(**ciclista.model_dump(), id=0)
+    return use_case.execute(novo)
 
 @router.get(
     "/ciclista/{idCiclista}",
@@ -31,8 +49,11 @@ def post_ciclista(payload: RequisicaoCadastroCiclista):
         422: {"description": "Dados Inválidos", "model": list[Erro]},
     }
 )
-def get_ciclista(id_ciclista: int = Path(..., gt=0, alias="idCiclista")):
-    return buscar_ciclista_por_id(id_ciclista)
+def get_ciclista(
+    id_ciclista: int = Path(..., alias="idCiclista"),
+    use_case: BuscarCiclistaPorId = Depends(get_buscar_ciclista_use_case)
+):
+    return use_case.execute(id_ciclista)
 
 @router.put(
     "/ciclista/{idCiclista}",
@@ -45,8 +66,14 @@ def get_ciclista(id_ciclista: int = Path(..., gt=0, alias="idCiclista")):
         404: {"description": "Não encontrado", "model": Erro}
     }
 )
-def put_ciclista(payload: EdicaoCiclista, id_ciclista: int = Path(..., alias="idCiclista")):
-    return atualizar_ciclista(id_ciclista, payload)
+@router.put("/ciclista/{idCiclista}")
+def put_ciclista(
+    payload: EdicaoCiclista,
+    id_ciclista: int = Path(..., alias="idCiclista"),
+    use_case: AtualizarCiclista = Depends(get_atualizar_ciclista_use_case)
+):
+    cic = use_case.execute(id_ciclista, payload)
+    return CiclistaResposta(**cic.model_dump())
 
 @router.get(
     "/ciclista/existeEmail/{email}",
@@ -59,5 +86,8 @@ def put_ciclista(payload: EdicaoCiclista, id_ciclista: int = Path(..., alias="id
         400: {"description": "Email não enviado como parâmetro", "model": Erro}
     }
 )
-def get_email_existe(email: str = Path(..., title="Email do ciclista")):
-  return email_existe(email)
+def get_email_existe(
+    email: str,
+    use_case: BuscarCiclistaPorId = Depends(get_verificar_email_use_case)
+):
+    return use_case.execute(email)

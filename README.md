@@ -2,6 +2,17 @@
 
 Este microsserviço é responsável pela **gestão de ciclistas e seus cartões de crédito, funcionários e operações de aluguel e devolução de bicicletas** no Sistema de Controle de Bicicletário (SCB).
 
+## Arquitetura
+
+Este projeto segue os princípios da **Clean Architecture**, com uma separação clara de responsabilidades em diferentes camadas:
+
+- `domain/` – modelos de entidades e regras de negócio centrais
+- `use_cases/` – casos de uso que orquestram regras e validações
+- `infra/repositories/` – implementação de repositórios de persistência (ex: fake, banco real)
+- `api/` – camada de interface REST com FastAPI
+- `dependencies/` – configuração de injeções para os casos de uso
+- `tests/` – testes automatizados para cada funcionalidade
+
 ## Funcionalidades
 
 ### Gestão de Ciclistas
