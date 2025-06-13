@@ -1,0 +1,5 @@
+from app.infra.repositories.fake_ciclista_repository import FakeCiclistaRepository
+from app.infra.repositories.fake_funcionario_repository import FakeFuncionarioRepository
+
+fake_ciclista_repository = FakeCiclistaRepository()
+fake_funcionario_repository = FakeFuncionarioRepository()

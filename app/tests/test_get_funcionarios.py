@@ -4,22 +4,23 @@ from fastapi.testclient import TestClient
 client = TestClient(app)
 
 def test_listar_funcionarios_vazio():
-    """Deve retornar lista vazia inicialmente"""
+    client.get("/restaurarBanco")
+
     res = client.get("/funcionario")
     assert res.status_code == 200
     assert isinstance(res.json(), list)
     assert len(res.json()) == 0
 
+def test_listar_funcionarios_apos_cadastro():
+    client.get("/restaurarBanco")
 
-def test_listar_funcionarios_com_dados():
-    """Após cadastrar um funcionário, ele deve aparecer na listagem"""
     payload = {
-        "nome": "Carlos Souza",
-        "idade": 35,
-        "funcao": "Gerente",
-        "cpf": "12345678900",
-        "email": "carlos@empresa.com",
-        "senha": "123456"
+        "nome": "Ana Pereira",
+        "idade": 28,
+        "funcao": "Atendente",
+        "cpf": "33333333333",
+        "email": "ana@empresa.com",
+        "senha": "senha456"
     }
 
     res_post = client.post("/funcionario", json=payload)
@@ -27,7 +28,6 @@ def test_listar_funcionarios_com_dados():
 
     res = client.get("/funcionario")
     assert res.status_code == 200
-    data = res.json()
-    assert isinstance(data, list)
-    assert len(data) >= 1
-    assert any(f["email"] == "carlos@empresa.com" for f in data)
+    funcionarios = res.json()
+    assert isinstance(funcionarios, list)
+    assert any(f["email"] == "ana@empresa.com" for f in funcionarios)

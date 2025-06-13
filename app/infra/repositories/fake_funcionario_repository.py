@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Optional
 from app.domain.entities.funcionario import Funcionario, NovoFuncionario
 from app.domain.repositories.funcionario_repository import FuncionarioRepository
 
@@ -18,3 +18,15 @@ class FakeFuncionarioRepository(FuncionarioRepository):
     
     def listar_todos(self) -> List[Funcionario]:
         return self._db
+    
+    def buscar_por_id(self, id: int) -> Optional[Funcionario]:
+        for f in self._db:
+            if f.matricula == str(id):
+                return f
+        return None
+
+    def resetar(self) -> None:
+        self._db.clear()
+        self._contador = 1
+
+fake_funcionario_repository = FakeFuncionarioRepository()

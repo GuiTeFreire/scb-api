@@ -2,10 +2,8 @@ from app.use_cases.buscar_ciclista_por_id import BuscarCiclistaPorId
 from app.use_cases.atualizar_ciclista import AtualizarCiclista
 from app.use_cases.cadastrar_ciclista import CadastrarCiclista
 from app.use_cases.verificar_email_existente import VerificarEmailExistente
-from app.infra.repositories.fake_ciclista_repository import FakeCiclistaRepository
 from app.use_cases.ativar_ciclista import AtivarCiclista
-
-repo = FakeCiclistaRepository()
+from app.infra.repositories import fake_ciclista_repository as repo
 
 def get_buscar_ciclista_use_case():
     return BuscarCiclistaPorId(repo)

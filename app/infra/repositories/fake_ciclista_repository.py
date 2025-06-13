@@ -32,3 +32,7 @@ class FakeCiclistaRepository(CiclistaRepository):
                     setattr(c, key, value)
                 return c
         return None
+    
+    def resetar(self):
+        self._db.clear()
+        self._current_id = 1
