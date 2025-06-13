@@ -3,8 +3,26 @@ from app.dependencies.funcionario import get_cadastrar_funcionario_uc
 from app.use_cases.cadastrar_funcionario import CadastrarFuncionario
 from app.domain.entities.funcionario import NovoFuncionario, Funcionario
 from app.domain.entities.erro import Erro
+from app.dependencies.funcionario import get_listar_funcionarios_uc
+from app.use_cases.listar_funcionarios import ListarFuncionarios
+from typing import List
 
 router = APIRouter()
+
+@router.get(
+    "/funcionario",
+    response_model=List[Funcionario],
+    summary="recupera funcionários cadastrados",
+    status_code=status.HTTP_200_OK,
+    tags=["Aluguel"],
+    responses={
+        200: {"description": "200 OK"},
+    }
+)
+def listar_funcionarios(
+    use_case: ListarFuncionarios = Depends(get_listar_funcionarios_uc)
+):
+    return use_case.execute()
 
 @router.post(
     "/funcionario",
@@ -12,9 +30,9 @@ router = APIRouter()
     summary="Cadastrar funcionário",
     status_code=status.HTTP_200_OK,
     tags=["Aluguel"],
-        responses={
-            200: {"description": "Dados cadastrados"},
-            422: {"description": "Dados Inválidos", "model": list[Erro]},
+    responses={
+        200: {"description": "Dados cadastrados"},
+        422: {"description": "Dados Inválidos", "model": list[Erro]},
     }
 )
 def post_funcionario(

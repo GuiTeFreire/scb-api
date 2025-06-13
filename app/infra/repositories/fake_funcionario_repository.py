@@ -15,3 +15,6 @@ class FakeFuncionarioRepository(FuncionarioRepository):
         self._db.append(funcionario)
         self._contador += 1
         return funcionario
+    
+    def listar_todos(self) -> List[Funcionario]:
+        return self._db
