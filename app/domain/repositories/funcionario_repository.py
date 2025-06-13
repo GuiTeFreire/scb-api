@@ -1,6 +1,7 @@
 from abc import ABC, abstractmethod
-from app.domain.entities.funcionario import Funcionario, NovoFuncionario
 from typing import List, Optional
+
+from app.domain.entities.funcionario import Funcionario, NovoFuncionario
 
 class FuncionarioRepository(ABC):
     @abstractmethod
@@ -14,3 +15,6 @@ class FuncionarioRepository(ABC):
 
     @abstractmethod
     def resetar(self) -> None: ...
+
+    @abstractmethod
+    def remover(self, id: int) -> bool: ...

@@ -1,14 +1,15 @@
 from fastapi import APIRouter, status, Depends, Path
-from app.dependencies.funcionario import get_cadastrar_funcionario_uc
-from app.use_cases.cadastrar_funcionario import CadastrarFuncionario
-from app.domain.entities.funcionario import NovoFuncionario, Funcionario
-from app.domain.entities.erro import Erro
-from app.dependencies.funcionario import get_listar_funcionarios_uc
-from app.use_cases.listar_funcionarios import ListarFuncionarios
 from typing import List
-from app.dependencies.funcionario import get_buscar_funcionario_uc
+
+from app.dependencies.funcionario import get_cadastrar_funcionario_uc, get_remover_funcionario_uc, get_atualizar_funcionario_uc, get_buscar_funcionario_uc, get_remover_funcionario_uc, get_atualizar_funcionario_uc, get_listar_funcionarios_uc
+
+from app.domain.entities.erro import Erro
+from app.domain.entities.funcionario import NovoFuncionario, Funcionario
+
 from app.use_cases.buscar_funcionario_por_id import BuscarFuncionarioPorId
-from app.dependencies.funcionario import get_atualizar_funcionario_uc
+from app.use_cases.cadastrar_funcionario import CadastrarFuncionario
+from app.use_cases.listar_funcionarios import ListarFuncionarios
+from app.use_cases.remover_funcionario import RemoverFuncionario
 
 router = APIRouter()
 
@@ -40,9 +41,9 @@ def listar_funcionarios(
 )
 def post_funcionario(
     payload: NovoFuncionario,
-    uc: CadastrarFuncionario = Depends(get_cadastrar_funcionario_uc)
+    use_case: CadastrarFuncionario = Depends(get_cadastrar_funcionario_uc)
 ):
-    return uc.execute(payload)
+    return use_case.execute(payload)
 
 @router.get(
     "/funcionario/{idFuncionario}",
@@ -57,9 +58,9 @@ def post_funcionario(
 )
 def get_funcionario_por_id(
     id_funcionario: int = Path(..., gt=0, alias="idFuncionario"),
-    uc: BuscarFuncionarioPorId = Depends(get_buscar_funcionario_uc)
+    use_case: BuscarFuncionarioPorId = Depends(get_buscar_funcionario_uc)
 ):
-    return uc.execute(id_funcionario)
+    return use_case.execute(id_funcionario)
 
 @router.put(
     "/funcionario/{idFuncionario}",
@@ -78,3 +79,20 @@ def put_funcionario(
 ):
     use_case = get_atualizar_funcionario_uc()
     return use_case.execute(id_funcionario, payload)
+
+@router.delete(
+    "/funcionario/{idFuncionario}",
+    tags=["Aluguel"],
+    summary="Remover funcionário",
+    responses={
+        200: {"description": "Dados removidos"},
+        422: {"description": "Dados Inválidos", "model": list[Erro]},
+        404: {"description": "Não encontrado", "model": Erro}
+    }
+)
+def delete_funcionario(
+    id_funcionario: int = Path(..., alias="idFuncionario"),
+    use_case: RemoverFuncionario = Depends(get_remover_funcionario_uc)
+):
+    use_case.execute(id_funcionario)
+    return {"mensagem": "Funcionário removido com sucesso"}

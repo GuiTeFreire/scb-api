@@ -1,4 +1,5 @@
 from typing import List, Optional
+
 from app.domain.entities.funcionario import Funcionario, NovoFuncionario
 from app.domain.repositories.funcionario_repository import FuncionarioRepository
 
@@ -31,7 +32,7 @@ class FakeFuncionarioRepository(FuncionarioRepository):
 
     def atualizar(self, id: int, dados: NovoFuncionario) -> Optional[Funcionario]:
         for f in self._db:
-            if f.matricula == str(id):  # matricula é string
+            if f.matricula == str(id):
                 f.nome = dados.nome
                 f.idade = dados.idade
                 f.funcao = dados.funcao
@@ -40,5 +41,12 @@ class FakeFuncionarioRepository(FuncionarioRepository):
                 f.senha = dados.senha
                 return f
         return None
+
+    def remover(self, id: int) -> bool:
+        for i, f in enumerate(self._db):
+            if f.matricula == str(id):
+                del self._db[i]
+                return True
+        return False
 
 fake_funcionario_repository = FakeFuncionarioRepository()

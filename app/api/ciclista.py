@@ -1,14 +1,5 @@
 from fastapi import APIRouter, status, Depends, Path, Header
-from app.domain.entities.erro import Erro
-from app.domain.entities.ciclista import RequisicaoCadastroCiclista, CiclistaResposta, NovoCiclista
-from app.infra.repositories.fake_ciclista_repository import FakeCiclistaRepository
-from app.use_cases.cadastrar_ciclista import CadastrarCiclista
-from app.domain.entities.ciclista import Ciclista
-from app.use_cases.buscar_ciclista_por_id import BuscarCiclistaPorId
-from app.use_cases.atualizar_ciclista import AtualizarCiclista
-from app.domain.entities.ciclista import EdicaoCiclista
-from app.use_cases.verificar_email_existente import VerificarEmailExistente
-from app.use_cases.ativar_ciclista import AtivarCiclista
+
 from app.dependencies.ciclista import (
     get_buscar_ciclista_use_case,
     get_atualizar_ciclista_use_case,
@@ -16,6 +7,17 @@ from app.dependencies.ciclista import (
     get_verificar_email_use_case,
     get_ativar_ciclista_uc
 )
+
+from app.domain.entities.ciclista import Ciclista, EdicaoCiclista, RequisicaoCadastroCiclista, CiclistaResposta, NovoCiclista
+from app.domain.entities.erro import Erro
+
+from app.infra.repositories.fake_ciclista_repository import FakeCiclistaRepository
+
+from app.use_cases.ativar_ciclista import AtivarCiclista
+from app.use_cases.atualizar_ciclista import AtualizarCiclista
+from app.use_cases.buscar_ciclista_por_id import BuscarCiclistaPorId
+from app.use_cases.cadastrar_ciclista import CadastrarCiclista
+from app.use_cases.verificar_email_existente import VerificarEmailExistente
 
 router = APIRouter()
 
@@ -93,9 +95,9 @@ def put_ciclista(
 def ativar_ciclista(
     id_ciclista: int = Path(..., alias="idCiclista"),
     x_id_requisicao: int = Header(default=None, alias="x-id-requisicao"),
-    uc: AtivarCiclista = Depends(get_ativar_ciclista_uc)
+    use_case: AtivarCiclista = Depends(get_ativar_ciclista_uc)
 ):
-    return uc.execute(id_ciclista)
+    return use_case.execute(id_ciclista)
 
 @router.get(
     "/ciclista/existeEmail/{email}",

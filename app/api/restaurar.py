@@ -1,4 +1,5 @@
 from fastapi import APIRouter, status
+
 from app.dependencies.reset import get_restaurar_banco_uc
 
 router = APIRouter()
@@ -13,6 +14,6 @@ router = APIRouter()
     }
 )
 def restaurar_banco():
-    uc = get_restaurar_banco_uc()
-    uc.execute()
+    use_case = get_restaurar_banco_uc()
+    use_case.execute()
     return {"mensagem": "Banco restaurado com sucesso"}

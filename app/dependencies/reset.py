@@ -1,5 +1,6 @@
-from app.use_cases.restaurar_banco import RestaurarBanco
 from app.infra.repositories import fake_ciclista_repository, fake_funcionario_repository
+
+from app.use_cases.restaurar_banco import RestaurarBanco
 
 def get_restaurar_banco_uc():
     return RestaurarBanco(
