@@ -28,6 +28,7 @@ repo = FakeCiclistaRepository()
     status_code=status.HTTP_201_CREATED,
     tags=["Aluguel"],
     responses={
+        201: {"description": "Ciclista cadastrado"},
         422: {"description": "Dados Inválidos", "model": list[Erro]},
         404: {"description": "Requisição mal formada", "model": Erro}
     }
@@ -47,6 +48,7 @@ def post_ciclista(
     status_code=status.HTTP_200_OK,
     tags=["Aluguel"],
     responses={
+        200: {"description": "Retorna ciclista solicitado"},
         404: {"description": "Requisição mal formada", "model": Erro},
         422: {"description": "Dados Inválidos", "model": list[Erro]},
     }

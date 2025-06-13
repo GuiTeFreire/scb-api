@@ -30,7 +30,7 @@ Este projeto segue os princípios da **Clean Architecture**, com uma separação
 - `POST /funcionario` — Cadastrar funcionário
 - `GET /funcionario` — Listar todos os funcionários
 - `GET /funcionario/{idFuncionario}` — Obter dados de um funcionário
-- `PUT /funcionario/{idFuncionario}` — Atualizar dados
+- `PUT /funcionario/{idFuncionario}` — Atualizar dados do funcionário
 - `DELETE /funcionario/{idFuncionario}` — Remover funcionário
 
 ### Cartão de Crédito

@@ -1,7 +1,7 @@
 from fastapi import FastAPI, Request, HTTPException
 from fastapi.responses import JSONResponse
 from fastapi.exceptions import RequestValidationError
-from app.api import ciclista
+from app.api import ciclista, funcionario
 
 app = FastAPI(
     title="SCB - Sistema de Controle de Bicicletário",
@@ -10,6 +10,7 @@ app = FastAPI(
 )
 
 app.include_router(ciclista.router)
+app.include_router(funcionario.router)
 
 @app.exception_handler(RequestValidationError)
 async def validation_exception_handler(request: Request, exc: RequestValidationError):
