@@ -29,4 +29,16 @@ class FakeFuncionarioRepository(FuncionarioRepository):
         self._db.clear()
         self._contador = 1
 
+    def atualizar(self, id: int, dados: NovoFuncionario) -> Optional[Funcionario]:
+        for f in self._db:
+            if f.matricula == str(id):  # matricula é string
+                f.nome = dados.nome
+                f.idade = dados.idade
+                f.funcao = dados.funcao
+                f.cpf = dados.cpf
+                f.email = dados.email
+                f.senha = dados.senha
+                return f
+        return None
+
 fake_funcionario_repository = FakeFuncionarioRepository()
