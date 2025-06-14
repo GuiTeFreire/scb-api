@@ -41,6 +41,9 @@ class NovoCartaoDeCredito(BaseModel):
         if not v.isdigit() or not 3 <= len(v) <= 4:
             raise ValueError("CVV deve conter 3 ou 4 dígitos numéricos.")
         return v
+    
+class CartaoDeCredito(NovoCartaoDeCredito):
+    id: int
 
 class RequisicaoCadastroCiclista(BaseModel):
     ciclista: NovoCiclista
@@ -49,6 +52,7 @@ class RequisicaoCadastroCiclista(BaseModel):
 class Ciclista(NovoCiclista):
     id: int
     status: str = Field(default="AGUARDANDO_CONFIRMACAO")
+    cartaoDeCredito: CartaoDeCredito
 
 class CiclistaResposta(BaseModel):
     id: int

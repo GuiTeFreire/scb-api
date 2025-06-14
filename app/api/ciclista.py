@@ -5,10 +5,11 @@ from app.dependencies.ciclista import (
     get_atualizar_ciclista_use_case,
     get_cadastrar_ciclista_use_case,
     get_verificar_email_use_case,
-    get_ativar_ciclista_uc
+    get_ativar_ciclista_use_case,
+    get_obter_cartao_use_case
 )
 
-from app.domain.entities.ciclista import Ciclista, EdicaoCiclista, RequisicaoCadastroCiclista, CiclistaResposta, NovoCiclista
+from app.domain.entities.ciclista import EdicaoCiclista, RequisicaoCadastroCiclista, CiclistaResposta, CartaoDeCredito
 from app.domain.entities.erro import Erro
 
 from app.infra.repositories.fake_ciclista_repository import FakeCiclistaRepository
@@ -17,8 +18,7 @@ from app.use_cases.ativar_ciclista import AtivarCiclista
 from app.use_cases.atualizar_ciclista import AtualizarCiclista
 from app.use_cases.buscar_ciclista_por_id import BuscarCiclistaPorId
 from app.use_cases.cadastrar_ciclista import CadastrarCiclista
-from app.use_cases.verificar_email_existente import VerificarEmailExistente
-
+from app.use_cases.obter_cartao_de_credito import ObterCartaoDeCredito
 router = APIRouter()
 
 repo = FakeCiclistaRepository()
@@ -31,17 +31,15 @@ repo = FakeCiclistaRepository()
     tags=["Aluguel"],
     responses={
         201: {"description": "Ciclista cadastrado"},
-        422: {"description": "Dados Inválidos", "model": list[Erro]},
-        404: {"description": "Requisição mal formada", "model": Erro}
+        404: {"description": "Requisição mal formada", "model": Erro},
+        422: {"description": "Dados Inválidos", "model": list[Erro]}
     }
 )
 def post_ciclista(
     payload: RequisicaoCadastroCiclista,
     use_case: CadastrarCiclista = Depends(get_cadastrar_ciclista_use_case)
 ):
-    ciclista = NovoCiclista(**payload.ciclista.model_dump())
-    novo = Ciclista(**ciclista.model_dump(), id=0)
-    return use_case.execute(novo)
+    return use_case.execute(payload)
 
 @router.get(
     "/ciclista/{idCiclista}",
@@ -68,8 +66,8 @@ def get_ciclista(
     tags=["Aluguel"],
     responses={
         200: {"description": "Dados atualizados"},
-        422: {"description": "Dados Inválidos", "model": list[Erro]},
-        404: {"description": "Não encontrado", "model": Erro}
+        404: {"description": "Não encontrado", "model": Erro},
+        422: {"description": "Dados Inválidos", "model": list[Erro]}
     }
 )
 @router.put("/ciclista/{idCiclista}")
@@ -95,7 +93,7 @@ def put_ciclista(
 def ativar_ciclista(
     id_ciclista: int = Path(..., alias="idCiclista"),
     x_id_requisicao: int = Header(default=None, alias="x-id-requisicao"),
-    use_case: AtivarCiclista = Depends(get_ativar_ciclista_uc)
+    use_case: AtivarCiclista = Depends(get_ativar_ciclista_use_case)
 ):
     return use_case.execute(id_ciclista)
 
@@ -106,8 +104,8 @@ def ativar_ciclista(
     response_model=bool,
     responses={
         200: {"description": "True caso exista o email e false caso contrario."},
-        422: {"description": "Dados Inválidos", "model": list[Erro]},
-        400: {"description": "Email não enviado como parâmetro", "model": Erro}
+        400: {"description": "Email não enviado como parâmetro", "model": Erro},
+        422: {"description": "Dados Inválidos", "model": list[Erro]}
     }
 )
 def get_email_existe(
@@ -115,3 +113,20 @@ def get_email_existe(
     use_case: BuscarCiclistaPorId = Depends(get_verificar_email_use_case)
 ):
     return use_case.execute(email)
+
+@router.get(
+    "/cartaoDeCredito/{idCiclista}",
+    response_model=CartaoDeCredito,
+    summary="Obter dados do cartão de crédito do ciclista",
+    tags=["Aluguel"],
+    responses={
+        200: {"description": "Dados do cartão"},
+        404: {"description": "Não encontrado", "model": Erro},
+        422: {"description": "Dados Inválidos", "model": list[Erro]}
+    }
+)
+def get_cartao_de_credito(
+    id_ciclista: int = Path(..., alias="idCiclista"),
+    use_case: ObterCartaoDeCredito = Depends(get_obter_cartao_use_case)
+):
+    return use_case.execute(id_ciclista)

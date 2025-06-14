@@ -37,3 +37,6 @@ class FakeCiclistaRepository(CiclistaRepository):
     def resetar(self):
         self._db.clear()
         self._current_id = 1
+
+    def proximo_id(self) -> int:
+        return self._current_id
