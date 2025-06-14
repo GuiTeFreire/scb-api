@@ -6,19 +6,22 @@ from app.dependencies.ciclista import (
     get_cadastrar_ciclista_use_case,
     get_verificar_email_use_case,
     get_ativar_ciclista_use_case,
-    get_obter_cartao_use_case
+    get_obter_cartao_use_case,
+    get_atualizar_cartao_use_case
 )
 
-from app.domain.entities.ciclista import EdicaoCiclista, RequisicaoCadastroCiclista, CiclistaResposta, CartaoDeCredito
+from app.domain.entities.ciclista import EdicaoCiclista, RequisicaoCadastroCiclista, CiclistaResposta, CartaoDeCredito, NovoCartaoDeCredito
 from app.domain.entities.erro import Erro
 
 from app.infra.repositories.fake_ciclista_repository import FakeCiclistaRepository
 
 from app.use_cases.ativar_ciclista import AtivarCiclista
+from app.use_cases.atualizar_cartao_de_credito import AtualizarCartaoDeCredito
 from app.use_cases.atualizar_ciclista import AtualizarCiclista
 from app.use_cases.buscar_ciclista_por_id import BuscarCiclistaPorId
 from app.use_cases.cadastrar_ciclista import CadastrarCiclista
 from app.use_cases.obter_cartao_de_credito import ObterCartaoDeCredito
+
 router = APIRouter()
 
 repo = FakeCiclistaRepository()
@@ -130,3 +133,21 @@ def get_cartao_de_credito(
     use_case: ObterCartaoDeCredito = Depends(get_obter_cartao_use_case)
 ):
     return use_case.execute(id_ciclista)
+
+@router.put(
+    "/cartaoDeCredito/{idCiclista}",
+    response_model=CartaoDeCredito,
+    summary="Atualizar cartão de crédito do ciclista",
+    tags=["Aluguel"],
+    responses={
+        200: {"description": "Cartão atualizado"},
+        404: {"description": "Não encontrado", "model": Erro},
+        422: {"description": "Dados Inválidos", "model": Erro}
+    }
+)
+def put_cartao_de_credito(
+    id_ciclista: int = Path(..., alias="idCiclista"),
+    payload: NovoCartaoDeCredito = ...,
+    use_case: AtualizarCartaoDeCredito = Depends(get_atualizar_cartao_use_case)
+):
+    return use_case.execute(id_ciclista, payload)
