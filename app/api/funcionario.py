@@ -2,13 +2,13 @@ from fastapi import APIRouter, status, Depends, Path
 from typing import List
 
 from app.dependencies.funcionario import (
-    get_cadastrar_funcionario_uc, 
-    get_remover_funcionario_uc, 
-    get_atualizar_funcionario_uc, 
-    get_buscar_funcionario_uc, 
-    get_remover_funcionario_uc, 
-    get_atualizar_funcionario_uc, 
-    get_listar_funcionarios_uc
+    get_cadastrar_funcionario_use_case, 
+    get_remover_funcionario_use_case, 
+    get_atualizar_funcionario_use_case, 
+    get_buscar_funcionario_use_case, 
+    get_remover_funcionario_use_case, 
+    get_atualizar_funcionario_use_case, 
+    get_listar_funcionarios_use_case
 )
 
 from app.domain.entities.erro import Erro
@@ -32,7 +32,7 @@ router = APIRouter()
     }
 )
 def listar_funcionarios(
-    use_case: ListarFuncionarios = Depends(get_listar_funcionarios_uc)
+    use_case: ListarFuncionarios = Depends(get_listar_funcionarios_use_case)
 ):
     return use_case.execute()
 
@@ -49,7 +49,7 @@ def listar_funcionarios(
 )
 def post_funcionario(
     payload: NovoFuncionario,
-    use_case: CadastrarFuncionario = Depends(get_cadastrar_funcionario_uc)
+    use_case: CadastrarFuncionario = Depends(get_cadastrar_funcionario_use_case)
 ):
     return use_case.execute(payload)
 
@@ -66,7 +66,7 @@ def post_funcionario(
 )
 def get_funcionario_por_id(
     id_funcionario: int = Path(..., gt=0, alias="idFuncionario"),
-    use_case: BuscarFuncionarioPorId = Depends(get_buscar_funcionario_uc)
+    use_case: BuscarFuncionarioPorId = Depends(get_buscar_funcionario_use_case)
 ):
     return use_case.execute(id_funcionario)
 
@@ -85,7 +85,7 @@ def put_funcionario(
     id_funcionario: int = Path(..., gt=0, alias="idFuncionario"),
     payload: NovoFuncionario = ...
 ):
-    use_case = get_atualizar_funcionario_uc()
+    use_case = get_atualizar_funcionario_use_case()
     return use_case.execute(id_funcionario, payload)
 
 @router.delete(
@@ -100,7 +100,7 @@ def put_funcionario(
 )
 def delete_funcionario(
     id_funcionario: int = Path(..., alias="idFuncionario"),
-    use_case: RemoverFuncionario = Depends(get_remover_funcionario_uc)
+    use_case: RemoverFuncionario = Depends(get_remover_funcionario_use_case)
 ):
     use_case.execute(id_funcionario)
     return {"mensagem": "Funcionário removido com sucesso"}

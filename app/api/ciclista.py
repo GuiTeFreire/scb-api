@@ -1,6 +1,6 @@
 from fastapi import APIRouter, status, Depends, Path, Header
 
-from app.dependencies.aluguel import get_verificar_permissao_aluguel_uc, get_realizar_aluguel_use_case
+from app.dependencies.aluguel import get_verificar_permissao_aluguel_use_case, get_realizar_aluguel_use_case, get_buscar_bicicleta_alugada_use_case
 from app.dependencies.ciclista import (
     get_buscar_ciclista_use_case,
     get_atualizar_ciclista_use_case,
@@ -12,6 +12,7 @@ from app.dependencies.ciclista import (
 )
 
 from app.domain.entities.aluguel import AluguelResponse, NovoAluguel
+from app.domain.entities.bicicleta import Bicicleta
 from app.domain.entities.ciclista import EdicaoCiclista, RequisicaoCadastroCiclista, CiclistaResposta, CartaoDeCredito, NovoCartaoDeCredito
 from app.domain.entities.erro import Erro
 
@@ -20,6 +21,7 @@ from app.infra.repositories.fake_ciclista_repository import FakeCiclistaReposito
 from app.use_cases.ativar_ciclista import AtivarCiclista
 from app.use_cases.atualizar_cartao_de_credito import AtualizarCartaoDeCredito
 from app.use_cases.atualizar_ciclista import AtualizarCiclista
+from app.use_cases.buscar_bicicleta_alugada import BuscarBicicletaAlugada
 from app.use_cases.buscar_ciclista_por_id import BuscarCiclistaPorId
 from app.use_cases.cadastrar_ciclista import CadastrarCiclista
 from app.use_cases.obter_cartao_de_credito import ObterCartaoDeCredito
@@ -112,11 +114,29 @@ def ativar_ciclista(
     responses={
         200: {"description": "true se puder alugar e false caso contrário"},
         404: {"description": "Não encontrado", "model": Erro},
+        422: {"description": "Dados Inválidos", "model": list[Erro]}
     }
 )
 def get_permite_aluguel(
     id_ciclista: int = Path(..., alias="idCiclista"),
-    use_case: VerificarPermissaoAluguel = Depends(get_verificar_permissao_aluguel_uc)
+    use_case: VerificarPermissaoAluguel = Depends(get_verificar_permissao_aluguel_use_case)
+):
+    return use_case.execute(id_ciclista)
+
+@router.get(
+    "/ciclista/{idCiclista}/bicicletaAlugada",
+    response_model=Bicicleta | None,
+    summary="Obtém bicicleta alugada por um ciclista (ou vazio caso contrário)",
+    tags=["Aluguel"],
+    responses={
+        200: {"description": "Retorna bicicleta caso o ciclista tenha alugado ou vazio caso contrário."},
+        404: {"description": "Ciclista não encontrado", "model": Erro},
+        422: {"description": "Dados Inválidos", "model": list[Erro]}
+    }
+)
+def get_bicicleta_alugada(
+    id_ciclista: int = Path(..., alias="idCiclista"),
+    use_case: BuscarBicicletaAlugada = Depends(get_buscar_bicicleta_alugada_use_case)
 ):
     return use_case.execute(id_ciclista)
 

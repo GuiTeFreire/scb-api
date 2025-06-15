@@ -1,7 +1,6 @@
 from fastapi import FastAPI, Request, HTTPException
 from fastapi.responses import JSONResponse
 from fastapi.exceptions import RequestValidationError
-from app.api import ciclista, funcionario
 from app.api import ciclista, funcionario, restaurar
 
 app = FastAPI(
@@ -25,6 +24,24 @@ async def validation_exception_handler(request: Request, exc: RequestValidationE
 
 @app.exception_handler(HTTPException)
 async def http_exception_handler(request: Request, exc: HTTPException):
+    # Se o detail já é uma lista, não modificar
+    if isinstance(exc.detail, list):
+        return JSONResponse(
+            status_code=exc.status_code,
+            content={
+                "codigo": str(exc.status_code),
+                "mensagem": exc.detail
+            }
+        )
+    
+    # Se o detail é um dicionário, não modificar
+    if isinstance(exc.detail, dict):
+        return JSONResponse(
+            status_code=exc.status_code,
+            content=exc.detail
+        )
+    
+    # Para outros casos, usar o formato padrão
     return JSONResponse(
         status_code=exc.status_code,
         content={
