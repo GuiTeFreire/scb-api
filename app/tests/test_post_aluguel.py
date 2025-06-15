@@ -6,7 +6,6 @@ client = TestClient(app)
 def test_aluguel_sucesso():
     client.get("/restaurarBanco")
 
-    # Cadastrar ciclista
     payload_ciclista = {
         "ciclista": {
             "nome": "Lucas Alves",
@@ -29,11 +28,9 @@ def test_aluguel_sucesso():
     assert res_post.status_code == 201
     ciclista_id = res_post.json()["id"]
 
-    # Ativar ciclista
     res_ativar = client.post(f"/ciclista/{ciclista_id}/ativar")
     assert res_ativar.status_code == 200
 
-    # Agora sim, tente alugar
     payload_aluguel = {
         "ciclista": ciclista_id,
         "trancaInicio": 101
@@ -49,7 +46,6 @@ def test_aluguel_sucesso():
 def test_aluguel_falha_com_aluguel_ativo():
     client.get("/restaurarBanco")
 
-    # Cadastrar ciclista
     payload_ciclista = {
         "ciclista": {
             "nome": "João Pedro",
@@ -72,7 +68,6 @@ def test_aluguel_falha_com_aluguel_ativo():
     assert res_post.status_code == 201
     ciclista_id = res_post.json()["id"]
 
-    # Ativar ciclista
     res_ativar = client.post(f"/ciclista/{ciclista_id}/ativar")
     assert res_ativar.status_code == 200
     
@@ -81,11 +76,10 @@ def test_aluguel_falha_com_aluguel_ativo():
         "trancaInicio": 102
     }
 
-    # Primeiro aluguel com sucesso
     res1 = client.post("/aluguel", json=payload_aluguel)
     print("ERRO PRIMEIRO ALUGUEL:", res1.status_code, res1.json())
     assert res1.status_code == 200
 
-    # Segundo aluguel deve falhar
     res2 = client.post("/aluguel", json=payload_aluguel)
     assert res2.status_code == 422
+    assert res2.json()["mensagem"][0]["mensagem"] == "Ciclista já possui aluguel ativo"
