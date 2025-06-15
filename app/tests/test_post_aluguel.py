@@ -1,0 +1,91 @@
+from fastapi.testclient import TestClient
+from app.main import app
+
+client = TestClient(app)
+
+def test_aluguel_sucesso():
+    client.get("/restaurarBanco")
+
+    # Cadastrar ciclista
+    payload_ciclista = {
+        "ciclista": {
+            "nome": "Lucas Alves",
+            "nascimento": "1990-01-01",
+            "cpf": "12345678901",
+            "nacionalidade": "BRASILEIRO",
+            "email": "lucas@teste.com",
+            "senha": "senha123",
+            "urlFotoDocumento": "https://site.com/doc.png"
+        },
+        "meioDePagamento": {
+            "nomeTitular": "Lucas Alves",
+            "numero": "4111111111111111",
+            "validade": "2026-12-01",
+            "cvv": "123"
+        }
+    }
+
+    res_post = client.post("/ciclista", json=payload_ciclista)
+    assert res_post.status_code == 201
+    ciclista_id = res_post.json()["id"]
+
+    # Ativar ciclista
+    res_ativar = client.post(f"/ciclista/{ciclista_id}/ativar")
+    assert res_ativar.status_code == 200
+
+    # Agora sim, tente alugar
+    payload_aluguel = {
+        "ciclista": ciclista_id,
+        "trancaInicio": 101
+    }
+
+    res_aluguel = client.post("/aluguel", json=payload_aluguel)
+    assert res_aluguel.status_code == 200
+    assert res_aluguel.json()["ciclista"] == ciclista_id
+    assert res_aluguel.json()["trancaInicio"] == 101
+    assert res_aluguel.json()["horaFim"] is None
+
+
+def test_aluguel_falha_com_aluguel_ativo():
+    client.get("/restaurarBanco")
+
+    # Cadastrar ciclista
+    payload_ciclista = {
+        "ciclista": {
+            "nome": "João Pedro",
+            "nascimento": "1991-01-01",
+            "cpf": "99999999999",
+            "nacionalidade": "BRASILEIRO",
+            "email": "joao@teste.com",
+            "senha": "senha123",
+            "urlFotoDocumento": "https://site.com/doc.png"
+        },
+        "meioDePagamento": {
+            "nomeTitular": "João Pedro",
+            "numero": "4111111111111111",
+            "validade": "2026-12-01",
+            "cvv": "123"
+        }
+    }
+
+    res_post = client.post("/ciclista", json=payload_ciclista)
+    assert res_post.status_code == 201
+    ciclista_id = res_post.json()["id"]
+
+    # Ativar ciclista
+    res_ativar = client.post(f"/ciclista/{ciclista_id}/ativar")
+    assert res_ativar.status_code == 200
+    
+    payload_aluguel = {
+        "ciclista": ciclista_id,
+        "trancaInicio": 102
+    }
+
+    # Primeiro aluguel com sucesso
+    res1 = client.post("/aluguel", json=payload_aluguel)
+    print("ERRO PRIMEIRO ALUGUEL:", res1.status_code, res1.json())
+    assert res1.status_code == 200
+
+    # Segundo aluguel deve falhar
+    res2 = client.post("/aluguel", json=payload_aluguel)
+    assert res2.status_code == 422

@@ -1,5 +1,6 @@
 from fastapi import APIRouter, status, Depends, Path, Header
 
+from app.dependencies.aluguel import get_verificar_permissao_aluguel_uc, get_realizar_aluguel_use_case
 from app.dependencies.ciclista import (
     get_buscar_ciclista_use_case,
     get_atualizar_ciclista_use_case,
@@ -10,6 +11,7 @@ from app.dependencies.ciclista import (
     get_atualizar_cartao_use_case
 )
 
+from app.domain.entities.aluguel import AluguelResponse, NovoAluguel
 from app.domain.entities.ciclista import EdicaoCiclista, RequisicaoCadastroCiclista, CiclistaResposta, CartaoDeCredito, NovoCartaoDeCredito
 from app.domain.entities.erro import Erro
 
@@ -21,6 +23,8 @@ from app.use_cases.atualizar_ciclista import AtualizarCiclista
 from app.use_cases.buscar_ciclista_por_id import BuscarCiclistaPorId
 from app.use_cases.cadastrar_ciclista import CadastrarCiclista
 from app.use_cases.obter_cartao_de_credito import ObterCartaoDeCredito
+from app.use_cases.verificar_permissao_aluguel import VerificarPermissaoAluguel
+from app.use_cases.realizar_aluguel import RealizarAluguel
 
 router = APIRouter()
 
@@ -101,6 +105,22 @@ def ativar_ciclista(
     return use_case.execute(id_ciclista)
 
 @router.get(
+    "/ciclista/{idCiclista}/permiteAluguel",
+    summary="Verifica se o ciclista pode alugar uma bicicleta, já que só pode alugar uma por vez.",
+    tags=["Aluguel"],
+    response_model=bool,
+    responses={
+        200: {"description": "true se puder alugar e false caso contrário"},
+        404: {"description": "Não encontrado", "model": Erro},
+    }
+)
+def get_permite_aluguel(
+    id_ciclista: int = Path(..., alias="idCiclista"),
+    use_case: VerificarPermissaoAluguel = Depends(get_verificar_permissao_aluguel_uc)
+):
+    return use_case.execute(id_ciclista)
+
+@router.get(
     "/ciclista/existeEmail/{email}",
     summary="Verifica se o e-mail já foi utilizado por algum ciclista.",
     tags=["Aluguel"],
@@ -136,13 +156,12 @@ def get_cartao_de_credito(
 
 @router.put(
     "/cartaoDeCredito/{idCiclista}",
-    response_model=CartaoDeCredito,
-    summary="Atualizar cartão de crédito do ciclista",
+    summary="Alterar dados de cartão de crédito de um ciclista",
     tags=["Aluguel"],
     responses={
-        200: {"description": "Cartão atualizado"},
+        200: {"description": "Dados atualizados"},
         404: {"description": "Não encontrado", "model": Erro},
-        422: {"description": "Dados Inválidos", "model": Erro}
+        422: {"description": "Dados Inválidos", "model": list[Erro]}
     }
 )
 def put_cartao_de_credito(
@@ -151,3 +170,19 @@ def put_cartao_de_credito(
     use_case: AtualizarCartaoDeCredito = Depends(get_atualizar_cartao_use_case)
 ):
     return use_case.execute(id_ciclista, payload)
+
+@router.post(
+    "/aluguel",
+    response_model=AluguelResponse,
+    summary="Realizar aluguel",
+    tags=["Aluguel"],
+    responses={
+        200: {"description": "Aluguel realizado"},
+        422: {"description": "Dados Inválidos", "model": list[Erro]}
+    }
+)
+def post_aluguel(
+    payload: NovoAluguel,
+    use_case: RealizarAluguel = Depends(get_realizar_aluguel_use_case)
+):
+    return use_case.execute(payload)

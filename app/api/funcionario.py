@@ -1,7 +1,15 @@
 from fastapi import APIRouter, status, Depends, Path
 from typing import List
 
-from app.dependencies.funcionario import get_cadastrar_funcionario_uc, get_remover_funcionario_uc, get_atualizar_funcionario_uc, get_buscar_funcionario_uc, get_remover_funcionario_uc, get_atualizar_funcionario_uc, get_listar_funcionarios_uc
+from app.dependencies.funcionario import (
+    get_cadastrar_funcionario_uc, 
+    get_remover_funcionario_uc, 
+    get_atualizar_funcionario_uc, 
+    get_buscar_funcionario_uc, 
+    get_remover_funcionario_uc, 
+    get_atualizar_funcionario_uc, 
+    get_listar_funcionarios_uc
+)
 
 from app.domain.entities.erro import Erro
 from app.domain.entities.funcionario import NovoFuncionario, Funcionario

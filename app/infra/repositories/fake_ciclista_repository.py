@@ -40,3 +40,5 @@ class FakeCiclistaRepository(CiclistaRepository):
 
     def proximo_id(self) -> int:
         return self._current_id
+    
+fake_ciclista_repository = FakeCiclistaRepository()

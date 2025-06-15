@@ -1,5 +1,4 @@
 from app.domain.repositories.funcionario_repository import FuncionarioRepository
-from app.domain.entities.erro import Erro
 from fastapi import HTTPException
 
 class RemoverFuncionario:
