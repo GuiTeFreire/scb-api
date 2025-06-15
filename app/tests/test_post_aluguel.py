@@ -83,3 +83,37 @@ def test_aluguel_falha_com_aluguel_ativo():
     res2 = client.post("/aluguel", json=payload_aluguel)
     assert res2.status_code == 422
     assert res2.json()["mensagem"][0]["mensagem"] == "Ciclista já possui aluguel ativo"
+
+def test_aluguel_falha_ciclista_inativo():
+    client.get("/restaurarBanco")
+
+    payload_ciclista = {
+        "ciclista": {
+            "nome": "Carlos Inativo",
+            "nascimento": "1995-01-01",
+            "cpf": "88888888888",
+            "nacionalidade": "BRASILEIRO",
+            "email": "inativo@teste.com",
+            "senha": "senha123",
+            "urlFotoDocumento": "https://site.com/doc.png"
+        },
+        "meioDePagamento": {
+            "nomeTitular": "Carlos Inativo",
+            "numero": "4111111111111111",
+            "validade": "2026-12-01",
+            "cvv": "123"
+        }
+    }
+
+    res_post = client.post("/ciclista", json=payload_ciclista)
+    assert res_post.status_code == 201
+    ciclista_id = res_post.json()["id"]
+
+    payload_aluguel = {
+        "ciclista": ciclista_id,
+        "trancaInicio": 105
+    }
+
+    res = client.post("/aluguel", json=payload_aluguel)
+    assert res.status_code == 422
+    assert res.json()["mensagem"][0]["mensagem"] == "Ciclista não está ativo"
