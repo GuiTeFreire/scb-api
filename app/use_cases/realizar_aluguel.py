@@ -31,13 +31,18 @@ class RealizarAluguel:
                 detail=[{"codigo": "422", "mensagem": "Ciclista já possui aluguel ativo"}]
             )
 
-        # Regras adicionais como verificação do status da tranca ou bicicleta
-        # são simuladas (em produção, esses dados viriam de outros serviços)
+        # Regras adicionais como verificação do status da tranca ou bicicleta são simuladas (em produção, esses dados viriam de outros serviços)
         id_bicicleta = 5678  # mock: bicicleta disponível
         id_cobranca = 1234   # mock: cobrança bem-sucedida
 
-        # Simulação: notificação enviada ao ciclista
-        # print(f"Notificação: aluguel iniciado para ciclista {dados.ciclista}")
+        # Simula alteração do status da bicicleta
+        print(f"[MOCK] Bicicleta {id_bicicleta} teve status alterado para EM_USO")
+
+        # Simula abertura da tranca
+        print(f"[MOCK] Tranca {dados.trancaInicio} teve status alterado para LIVRE")
+
+        # Simula notificação com dados do aluguel
+        print(f"[MOCK] E-mail enviado ao ciclista {dados.ciclista} com dados do aluguel.")
 
         aluguel = Aluguel(
             ciclista=dados.ciclista,

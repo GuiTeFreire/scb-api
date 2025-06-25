@@ -86,7 +86,6 @@ def get_ciclista(
         422: {"description": "Dados Inválidos", "model": list[Erro]}
     }
 )
-@router.put("/ciclista/{idCiclista}")
 def put_ciclista(
     payload: EdicaoCiclista,
     id_ciclista: int = Path(..., alias="idCiclista"),
