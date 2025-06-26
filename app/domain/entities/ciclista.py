@@ -1,11 +1,6 @@
 from pydantic import BaseModel, EmailStr, Field, field_validator
 from typing import Optional
 from datetime import date
-from enum import Enum
-
-class NacionalidadeEnum(str, Enum):
-    BRASILEIRO = "BRASILEIRO"
-    ESTRANGEIRO = "ESTRANGEIRO"
 
 class Passaporte(BaseModel):
     numero: str
@@ -17,7 +12,7 @@ class NovoCiclista(BaseModel):
     nascimento: date
     cpf: Optional[str] = None
     passaporte: Optional[Passaporte] = None
-    nacionalidade: NacionalidadeEnum
+    nacionalidade: str
     email: EmailStr
     urlFotoDocumento: Optional[str] = None
     senha: str
@@ -61,7 +56,7 @@ class CiclistaResposta(BaseModel):
     nascimento: date
     cpf: Optional[str] = None
     passaporte: Optional[Passaporte] = None
-    nacionalidade: NacionalidadeEnum
+    nacionalidade: str
     email: EmailStr
     urlFotoDocumento: Optional[str] = None
 
@@ -70,6 +65,6 @@ class EdicaoCiclista(BaseModel):
     nascimento: date
     cpf: Optional[str] = None
     passaporte: Optional[Passaporte] = None
-    nacionalidade: NacionalidadeEnum
+    nacionalidade: str
     email: EmailStr
     urlFotoDocumento: Optional[str] = None
