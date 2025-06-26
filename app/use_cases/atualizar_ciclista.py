@@ -13,6 +13,6 @@ class AtualizarCiclista:
 
         ciclista = self.repository.atualizar(id_ciclista, dados.model_dump())
         if not ciclista:
-            raise HTTPException(status_code=404)
+            raise HTTPException(status_code=404, detail="Ciclista não encontrado")
 
         return ciclista

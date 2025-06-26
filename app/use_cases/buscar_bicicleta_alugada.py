@@ -1,5 +1,6 @@
 from fastapi import HTTPException
-from app.domain.entities.bicicleta import Bicicleta
+from app.domain.entities.bicicleta import Bicicleta, StatusBicicletaEnum
+from app.domain.entities.ciclista import StatusEnum
 from app.domain.repositories.aluguel_repository import AluguelRepository
 from app.domain.repositories.ciclista_repository import CiclistaRepository
 
@@ -27,9 +28,9 @@ class BuscarBicicletaAlugada:
                     id=aluguel.bicicleta,
                     marca="MockMarca",
                     modelo="MockModelo",
-                    ano=2020,
+                    ano="2020",
                     numero=aluguel.bicicleta,
-                    status="EM_USO"
+                    status=StatusBicicletaEnum.EM_USO
                 )
         
         return None

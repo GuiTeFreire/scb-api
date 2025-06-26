@@ -1,6 +1,7 @@
 from datetime import datetime
 from fastapi import HTTPException
 from app.domain.entities.devolucao import NovoDevolucao, Devolucao
+from app.domain.entities.ciclista import StatusEnum
 from app.domain.repositories.aluguel_repository import AluguelRepository
 from app.domain.repositories.ciclista_repository import CiclistaRepository
 
@@ -11,7 +12,7 @@ class RealizarDevolucao:
 
     def execute(self, dados: NovoDevolucao) -> Devolucao:
         ciclista = self.ciclista_repo.buscar_por_id(dados.ciclista)
-        if not ciclista or ciclista.status != "ATIVO":
+        if not ciclista or ciclista.status != StatusEnum.ATIVO:
             raise HTTPException(
                 status_code=422,
                 detail=[{"codigo": "422", "mensagem": "Ciclista inválido ou inativo"}]

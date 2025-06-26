@@ -1,6 +1,7 @@
 from fastapi import HTTPException
 from app.domain.repositories.ciclista_repository import CiclistaRepository
 from app.domain.repositories.aluguel_repository import AluguelRepository
+from app.domain.entities.ciclista import StatusEnum
 
 class VerificarPermissaoAluguel:
     def __init__(
@@ -18,4 +19,6 @@ class VerificarPermissaoAluguel:
                 status_code=404,
                 detail={"codigo": "404", "mensagem": "Ciclista não encontrado"}
             )
+        if ciclista.status != StatusEnum.ATIVO:
+            return False
         return not self.aluguel_repo.tem_aluguel_ativo(id_ciclista)

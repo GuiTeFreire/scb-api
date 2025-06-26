@@ -2,6 +2,7 @@ from datetime import datetime
 from fastapi import HTTPException
 
 from app.domain.entities.aluguel import Aluguel, NovoAluguel
+from app.domain.entities.ciclista import StatusEnum
 from app.domain.repositories.aluguel_repository import AluguelRepository
 from app.domain.repositories.ciclista_repository import CiclistaRepository
 from app.use_cases.verificar_permissao_aluguel import VerificarPermissaoAluguel
@@ -19,7 +20,7 @@ class RealizarAluguel:
     def execute(self, dados: NovoAluguel) -> Aluguel:
         # Regra: só pode alugar se estiver com status ATIVO e sem aluguel ativo
         ciclista = self.ciclista_repo.buscar_por_id(dados.ciclista)
-        if not ciclista or ciclista.status != "ATIVO":
+        if not ciclista or ciclista.status != StatusEnum.ATIVO:
             raise HTTPException(
                 status_code=422,
                 detail=[{"codigo": "422", "mensagem": "Ciclista não está ativo"}]

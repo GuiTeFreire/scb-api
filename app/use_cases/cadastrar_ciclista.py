@@ -1,6 +1,6 @@
 from fastapi import HTTPException
 
-from app.domain.entities.ciclista import RequisicaoCadastroCiclista, CartaoDeCredito, Ciclista
+from app.domain.entities.ciclista import RequisicaoCadastroCiclista, CartaoDeCredito, Ciclista, StatusEnum
 from app.domain.repositories.ciclista_repository import CiclistaRepository
 
 class CadastrarCiclista:
@@ -27,7 +27,7 @@ class CadastrarCiclista:
 
         ciclista = Ciclista(
             id=novo_id,
-            status="AGUARDANDO_CONFIRMACAO",
+            status=StatusEnum.AGUARDANDO_CONFIRMACAO,
             cartaoDeCredito=cartao,
             **cic.model_dump()
         )

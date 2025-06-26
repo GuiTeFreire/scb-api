@@ -1,6 +1,12 @@
 from pydantic import BaseModel, EmailStr, Field, field_validator
 from typing import Optional
 from datetime import date
+from enum import Enum
+
+class StatusEnum(str, Enum):
+    AGUARDANDO_CONFIRMACAO: str = "AGUARDANDO_CONFIRMACAO"
+    ATIVO: str = "ATIVO"
+    INATIVO: str = "INATIVO"
 
 class Passaporte(BaseModel):
     numero: str
@@ -46,12 +52,12 @@ class RequisicaoCadastroCiclista(BaseModel):
 
 class Ciclista(NovoCiclista):
     id: int
-    status: str = Field(default="AGUARDANDO_CONFIRMACAO")
+    status: StatusEnum = Field(default="AGUARDANDO_CONFIRMACAO")
     cartaoDeCredito: CartaoDeCredito
 
 class CiclistaResposta(BaseModel):
     id: int
-    status: str
+    status: StatusEnum
     nome: str
     nascimento: date
     cpf: Optional[str] = None
