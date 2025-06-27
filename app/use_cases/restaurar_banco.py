@@ -2,15 +2,13 @@ from app.domain.repositories.funcionario_repository import FuncionarioRepository
 from app.domain.repositories.ciclista_repository import CiclistaRepository
 from app.domain.repositories.aluguel_repository import AluguelRepository
 
-from app.infra.repositories.fake_funcionario_repository import fake_funcionario_repository as funcionario_repo
-from app.infra.repositories.fake_ciclista_repository import fake_ciclista_repository as ciclista_repo
-from app.infra.repositories.fake_aluguel_repository import fake_aluguel_repository
+from app.infra.repositories import fake_funcionario_repository, fake_ciclista_repository, fake_aluguel_repository
 
 class RestaurarBanco:
     def __init__(
         self,
-        funcionario_repo: FuncionarioRepository = funcionario_repo,
-        ciclista_repo: CiclistaRepository = ciclista_repo,
+        funcionario_repo: FuncionarioRepository = fake_funcionario_repository,
+        ciclista_repo: CiclistaRepository = fake_ciclista_repository,
         aluguel_repo: AluguelRepository = fake_aluguel_repository
     ):
         self.funcionario_repo = funcionario_repo

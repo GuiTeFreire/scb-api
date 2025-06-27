@@ -14,6 +14,9 @@ class FuncionarioRepository(ABC):
     def buscar_por_id(self, id: int) -> Optional[Funcionario]: ...
 
     @abstractmethod
+    def buscar_por_email(self, email: str) -> Optional[Funcionario]: ...
+
+    @abstractmethod
     def resetar(self) -> None: ...
 
     @abstractmethod

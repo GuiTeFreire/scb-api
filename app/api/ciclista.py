@@ -22,8 +22,6 @@ from app.domain.entities.ciclista import EdicaoCiclista, RequisicaoCadastroCicli
 from app.domain.entities.devolucao import NovoDevolucao, Devolucao
 from app.domain.entities.erro import Erro
 
-from app.infra.repositories.fake_ciclista_repository import FakeCiclistaRepository
-
 from app.use_cases.ativar_ciclista import AtivarCiclista
 from app.use_cases.atualizar_cartao_de_credito import AtualizarCartaoDeCredito
 from app.use_cases.atualizar_ciclista import AtualizarCiclista
@@ -36,8 +34,6 @@ from app.use_cases.realizar_aluguel import RealizarAluguel
 from app.use_cases.realizar_devolucao import RealizarDevolucao
 
 router = APIRouter()
-
-repo = FakeCiclistaRepository()
 
 @router.post(
     "/ciclista",

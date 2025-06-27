@@ -1,4 +1,4 @@
-from app.infra.repositories import fake_ciclista_repository as repo
+from app.infra.repositories import fake_ciclista_repository
 
 from app.use_cases.ativar_ciclista import AtivarCiclista
 from app.use_cases.atualizar_cartao_de_credito import AtualizarCartaoDeCredito
@@ -9,22 +9,22 @@ from app.use_cases.obter_cartao_de_credito import ObterCartaoDeCredito
 from app.use_cases.verificar_email_existente import VerificarEmailExistente
 
 def get_buscar_ciclista_use_case():
-    return BuscarCiclistaPorId(repo)
+    return BuscarCiclistaPorId(fake_ciclista_repository)
 
 def get_atualizar_ciclista_use_case():
-    return AtualizarCiclista(repo)
+    return AtualizarCiclista(fake_ciclista_repository)
 
 def get_cadastrar_ciclista_use_case():
-    return CadastrarCiclista(repo)
+    return CadastrarCiclista(fake_ciclista_repository)
 
 def get_verificar_email_use_case():
-    return VerificarEmailExistente(repo)
+    return VerificarEmailExistente(fake_ciclista_repository)
 
 def get_ativar_ciclista_use_case() -> AtivarCiclista:
-    return AtivarCiclista(repo)
+    return AtivarCiclista(fake_ciclista_repository)
 
 def get_obter_cartao_use_case():
-    return ObterCartaoDeCredito(repo)
+    return ObterCartaoDeCredito(fake_ciclista_repository)
 
 def get_atualizar_cartao_use_case():
-    return AtualizarCartaoDeCredito(repo)
+    return AtualizarCartaoDeCredito(fake_ciclista_repository)

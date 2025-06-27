@@ -19,3 +19,23 @@ def test_post_funcionario_sucesso():
     body = res.json()
     assert body["nome"] == "Carlos Souza"
     assert "matricula" in body
+
+def test_post_funcionario_falha_email_duplicado():
+    client.get("/restaurarBanco")
+    
+    payload = {
+        "nome": "João Silva",
+        "idade": 30,
+        "funcao": "Atendente",
+        "cpf": "11111111111",
+        "email": "joao@empresa.com",
+        "documento": "RG111111",
+        "senha": "123456"
+    }
+
+    res1 = client.post("/funcionario", json=payload)
+    assert res1.status_code == 200
+
+    res2 = client.post("/funcionario", json=payload)
+    assert res2.status_code == 422
+    assert res2.json()["mensagem"] == "E-mail já cadastrado"

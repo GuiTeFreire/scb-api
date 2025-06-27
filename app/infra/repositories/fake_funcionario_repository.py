@@ -26,6 +26,12 @@ class FakeFuncionarioRepository(FuncionarioRepository):
                 return f
         return None
 
+    def buscar_por_email(self, email: str) -> Optional[Funcionario]:
+        for f in self._db:
+            if f.email == email:
+                return f
+        return None
+
     def resetar(self) -> None:
         self._db.clear()
         self._contador = 1
