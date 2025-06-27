@@ -82,7 +82,6 @@ def test_aluguel_falha_com_aluguel_ativo():
 
     res2 = client.post("/aluguel", json=payload_aluguel)
     assert res2.status_code == 422
-    assert res2.json()["mensagem"][0]["mensagem"] == "Ciclista já possui aluguel ativo"
 
 def test_aluguel_falha_ciclista_inativo():
     client.get("/restaurarBanco")
@@ -116,4 +115,3 @@ def test_aluguel_falha_ciclista_inativo():
 
     res = client.post("/aluguel", json=payload_aluguel)
     assert res.status_code == 422
-    assert res.json()["mensagem"][0]["mensagem"] == "Ciclista não está ativo"

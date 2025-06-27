@@ -6,7 +6,6 @@ client = TestClient(app)
 def test_bicicleta_alugada_retorna_bicicleta_quando_ha_aluguel():
     client.get("/restaurarBanco")
 
-    # Criar e ativar ciclista
     payload_ciclista = {
         "ciclista": {
             "nome": "Marcos Bicicleta",

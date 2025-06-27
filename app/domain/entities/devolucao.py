@@ -2,11 +2,13 @@ from pydantic import BaseModel
 from datetime import datetime
 
 class NovoDevolucao(BaseModel):
-    ciclista: int
-    trancaFim: int
+    idTranca: int
+    idBicicleta: int
 
-class Devolucao(NovoDevolucao):
+class Devolucao(BaseModel):
     bicicleta: int
     horaInicio: datetime
+    trancaFim: int
     horaFim: datetime
     cobranca: int
+    ciclista: int

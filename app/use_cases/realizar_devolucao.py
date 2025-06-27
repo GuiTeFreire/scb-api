@@ -10,46 +10,42 @@ class RealizarDevolucao:
         self.aluguel_repo = aluguel_repo
         self.ciclista_repo = ciclista_repo
 
-    def execute(self, dados: NovoDevolucao) -> Devolucao:
-        ciclista = self.ciclista_repo.buscar_por_id(dados.ciclista)
-        if not ciclista or ciclista.status != StatusEnum.ATIVO:
+    def execute(self, payload) -> Devolucao:
+        id_tranca = payload.idTranca
+        id_bicicleta = payload.idBicicleta
+
+        if id_tranca is None or id_bicicleta is None:
             raise HTTPException(
                 status_code=422,
-                detail=[{"codigo": "422", "mensagem": "Ciclista inválido ou inativo"}]
+                detail="Dados Inválidos"
             )
 
         alugueis = self.aluguel_repo.listar()
         aluguel_ativo = next(
-            (a for a in alugueis if a.ciclista == dados.ciclista and a.horaFim is None),
+            (a for a in alugueis if a.bicicleta == id_bicicleta and a.horaFim is None),
             None
         )
 
         if not aluguel_ativo:
             raise HTTPException(
                 status_code=422,
-                detail=[{"codigo": "422", "mensagem": "Ciclista não possui aluguel ativo"}]
+                detail="Bicicleta não está alugada ou já foi devolvida"
             )
 
         aluguel_ativo.horaFim = datetime.now()
-        aluguel_ativo.trancaFim = dados.trancaFim
-
-        # Simula cálculo e fila de cobrança
-        aluguel_ativo.cobranca = 9999  # mock
+        aluguel_ativo.trancaFim = id_tranca
+        aluguel_ativo.cobranca = 100  # mock
 
         # Simula alteração do status da bicicleta
         print(f"[MOCK] Bicicleta {aluguel_ativo.bicicleta} teve status alterado para DISPONÍVEL")
-        
         # Simula alteração do status da tranca
-        print(f"[MOCK] Tranca {dados.trancaFim} teve status alterado para OCUPADA")
-        
-        # Simula notificação
-        # print(f"Notificando ciclista {dados.ciclista} sobre devolução.")
+        print(f"[MOCK] Tranca {id_tranca} teve status alterado para OCUPADA")
 
         return Devolucao(
             bicicleta=aluguel_ativo.bicicleta,
             horaInicio=aluguel_ativo.horaInicio,
+            trancaFim=aluguel_ativo.trancaFim,
             horaFim=aluguel_ativo.horaFim,
             cobranca=aluguel_ativo.cobranca,
-            ciclista=aluguel_ativo.ciclista,
-            trancaFim=aluguel_ativo.trancaFim
+            ciclista=aluguel_ativo.ciclista
         )

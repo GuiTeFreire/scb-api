@@ -18,18 +18,17 @@ class RealizarAluguel:
         self.verificador = VerificarPermissaoAluguel(ciclista_repo, aluguel_repo)
 
     def execute(self, dados: NovoAluguel) -> Aluguel:
-        # Regra: só pode alugar se estiver com status ATIVO e sem aluguel ativo
         ciclista = self.ciclista_repo.buscar_por_id(dados.ciclista)
         if not ciclista or ciclista.status != StatusEnum.ATIVO:
             raise HTTPException(
                 status_code=422,
-                detail=[{"codigo": "422", "mensagem": "Ciclista não está ativo"}]
+                detail="Ciclista não está ativo"
             )
 
         if not self.verificador.execute(dados.ciclista):
             raise HTTPException(
                 status_code=422,
-                detail=[{"codigo": "422", "mensagem": "Ciclista já possui aluguel ativo"}]
+                detail="Ciclista já possui aluguel ativo"
             )
 
         # Regras adicionais como verificação do status da tranca ou bicicleta são simuladas (em produção, esses dados viriam de outros serviços)

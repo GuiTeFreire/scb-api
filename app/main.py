@@ -23,16 +23,7 @@ async def validation_exception_handler(request: Request, exc: RequestValidationE
     )
 
 @app.exception_handler(HTTPException)
-async def http_exception_handler(request: Request, exc: HTTPException):
-    if isinstance(exc.detail, list):
-        return JSONResponse(
-            status_code=exc.status_code,
-            content={
-                "codigo": str(exc.status_code),
-                "mensagem": exc.detail
-            }
-        )
-    
+async def http_exception_handler(request: Request, exc: HTTPException):    
     if isinstance(exc.detail, dict):
         return JSONResponse(
             status_code=exc.status_code,
