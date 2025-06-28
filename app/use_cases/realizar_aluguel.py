@@ -39,18 +39,39 @@ class RealizarAluguel:
         #     raise HTTPException(status_code=422, detail="Tranca não está ocupada")
         
         # 6. Sistema lê número da bicicleta presa na tranca [E2]
-        id_bicicleta = 5678 # Mock
+        id_bicicleta = 5678 # Mock da bicicleta
         
         # 7. Verificar se bicicleta não está em reparo [E4][R5]
         # if id_bicicleta.status != "EM_REPARO":
         #     raise HTTPException(status_code=422, detail="Bicicleta em reparo")
         
         # 8. Sistema envia cobrança [R2]
-        id_cobranca = 1234
         valor_cobranca = 10.00
-        print(f"[MOCK] Cobrança de R$ {valor_cobranca:.2f} realizada com sucesso")
+        print(f"[MOCK] Cobrança de R$ {valor_cobranca:.2f} enviada para Administradora CC")
         
-        # 9. Sistema registra dados da retirada [R3]
+        # Simular chamada para microsserviço externo
+        def simular_chamada_cobranca(valor: float, ciclista_id: int) -> dict:
+            return {
+                "id_cobranca": 1234,
+                "status": "APROVADA",
+                "valor": valor,
+                "ciclista_id": ciclista_id,
+                "data_cobranca": datetime.now().isoformat()
+            }
+
+        resultado_cobranca = simular_chamada_cobranca(valor_cobranca, dados.ciclista)
+        id_cobranca = resultado_cobranca["id_cobranca"]
+        
+        # 9. Administradora CC confirma pagamento [E3]
+        # if resultado_cobranca["status"] != "APROVADA":
+        #     print(f"[MOCK] Pagamento não autorizado - registrando para cobrança posterior")
+        #     raise HTTPException(
+        #         status_code=422,
+        #         detail="Pagamento não foi concluído"
+        #     )
+        # print(f"[MOCK] Pagamento confirmado pela Administradora CC - ID: {id_cobranca}")
+        
+        # 10. Sistema registra dados da retirada [R3]
         aluguel = Aluguel(
             ciclista=dados.ciclista,
             trancaInicio=dados.trancaInicio,
@@ -61,13 +82,13 @@ class RealizarAluguel:
             cobranca=id_cobranca
         )
         
-        # 10. Sistema altera status da bicicleta para "em uso"
+        # 11. Sistema altera status da bicicleta para "em uso"
         print(f"[MOCK] Bicicleta {id_bicicleta} teve status alterado para EM_USO")
         
-        # 11. Sistema altera status da tranca para "livre"
+        # 12. Sistema altera status da tranca para "livre"
         print(f"[MOCK] Tranca {dados.trancaInicio} teve status alterado para LIVRE")
         
-        # 12. Sistema envia email [R4]
+        # 13. Sistema envia email [R4]
         print(f"[MOCK] E-mail enviado ao ciclista {dados.ciclista} com dados do aluguel.")
         
         return self.aluguel_repo.salvar(aluguel)
