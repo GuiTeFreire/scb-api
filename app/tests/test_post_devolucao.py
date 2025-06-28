@@ -11,7 +11,6 @@ client = TestClient(app)
 def test_devolucao_sucesso():
     client.get("/restaurarBanco")
 
-    # Cadastrar ciclista
     payload_ciclista = {
         "ciclista": {
             "nome": "Maria Devolve",
@@ -36,7 +35,6 @@ def test_devolucao_sucesso():
 
     client.post(f"/ciclista/{ciclista_id}/ativar")
 
-    # Criar aluguel
     payload_aluguel = {
         "ciclista": ciclista_id,
         "trancaInicio": 103
@@ -44,7 +42,6 @@ def test_devolucao_sucesso():
     res_aluguel = client.post("/aluguel", json=payload_aluguel)
     assert res_aluguel.status_code == 200
 
-    # Realizar devolução
     payload_devolucao = {
         "idTranca": 201,
         "idBicicleta": res_aluguel.json()["bicicleta"]
@@ -112,4 +109,48 @@ def test_devolucao_falha_idTranca_none():
     with pytest.raises(HTTPException) as exc:
         use_case.execute(payload)
     assert exc.value.status_code == 422
-    assert exc.value.detail == "Dados Inválidos"
+    assert exc.value.detail == "Bicicleta não está alugada"
+
+def test_devolucao_falha_bicicleta_invalida():
+    client.get("/restaurarBanco")
+
+    payload_ciclista = {
+        "ciclista": {
+            "nome": "João Bicicleta Invalida",
+            "nascimento": "1993-01-01",
+            "cpf": "66666666666",
+            "nacionalidade": "BRASILEIRO",
+            "email": "bicicleta@teste.com",
+            "senha": "senha123",
+            "urlFotoDocumento": "https://site.com/doc.png"
+        },
+        "meioDePagamento": {
+            "nomeTitular": "João Bicicleta Invalida",
+            "numero": "4111111111111111",
+            "validade": "2026-12-01",
+            "cvv": "123"
+        }
+    }
+
+    res_post = client.post("/ciclista", json=payload_ciclista)
+    assert res_post.status_code == 201
+    ciclista_id = res_post.json()["id"]
+
+    res_ativar = client.post(f"/ciclista/{ciclista_id}/ativar")
+    assert res_ativar.status_code == 200
+
+    payload_devolucao = {
+        "idTranca": 201,
+        "idBicicleta": 0
+    }
+
+    res = client.post("/devolucao", json=payload_devolucao)
+    assert res.status_code == 422
+
+    payload_devolucao = {
+        "idTranca": 201,
+        "idBicicleta": -1
+    }
+
+    res = client.post("/devolucao", json=payload_devolucao)
+    assert res.status_code == 422
