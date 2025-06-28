@@ -115,3 +115,49 @@ def test_aluguel_falha_ciclista_inativo():
 
     res = client.post("/aluguel", json=payload_aluguel)
     assert res.status_code == 422
+
+def test_aluguel_falha_tranca_invalida():
+    client.get("/restaurarBanco")
+
+    payload_ciclista = {
+        "ciclista": {
+            "nome": "Maria Tranca Invalida",
+            "nascimento": "1992-01-01",
+            "cpf": "77777777777",
+            "nacionalidade": "BRASILEIRO",
+            "email": "tranca@teste.com",
+            "senha": "senha123",
+            "urlFotoDocumento": "https://site.com/doc.png"
+        },
+        "meioDePagamento": {
+            "nomeTitular": "Maria Tranca Invalida",
+            "numero": "4111111111111111",
+            "validade": "2026-12-01",
+            "cvv": "123"
+        }
+    }
+
+    res_post = client.post("/ciclista", json=payload_ciclista)
+    assert res_post.status_code == 201
+    ciclista_id = res_post.json()["id"]
+
+    res_ativar = client.post(f"/ciclista/{ciclista_id}/ativar")
+    assert res_ativar.status_code == 200
+
+    # Testar com trancaInicio = 0 (inválido)
+    payload_aluguel = {
+        "ciclista": ciclista_id,
+        "trancaInicio": 0
+    }
+
+    res = client.post("/aluguel", json=payload_aluguel)
+    assert res.status_code == 422
+
+    # Testar com trancaInicio negativo (inválido)
+    payload_aluguel = {
+        "ciclista": ciclista_id,
+        "trancaInicio": -1
+    }
+
+    res = client.post("/aluguel", json=payload_aluguel)
+    assert res.status_code == 422
