@@ -47,8 +47,10 @@ Este projeto segue os princípios da **Clean Architecture**, com uma separação
 
 - `GET /restaurarBanco` — Restaurar os dados iniciais do microsserviço para testes ou reset
 
-
 ## Como executar localmente
+
+1. Ativar o ambiente virtual com: `venv\Scripts\activate`
+2. Rodar com: `uvicorn app.main:app --reload --port 8000 `
 
 **Usando Python diretamente com Docker:**
 
@@ -60,7 +62,8 @@ Este projeto segue os princípios da **Clean Architecture**, com uma separação
 - API Base: http://localhost:8000
 - Documentação Swagger: http://localhost:8000/docs
 
-> Se estiver rodando via EC2, substitua `localhost` pelo IP público da sua instância.
+- API Base na EC2: http://15.228.249.205:8000/
+- Documentação Swagger na EC2: http://15.228.249.205:8000/
 
 ## Autor responsável
 
