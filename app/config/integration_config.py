@@ -18,7 +18,7 @@ class IntegrationConfig:
     @classmethod
     def get_external_service_config(cls) -> Dict[str, Any]:
         return {
-            "base_url": cls.EXTERNAL_URL,
+            "base_url": cls.EXTERNAL_BASE_URL,
             "timeout": cls.REQUEST_TIMEOUT,
             "max_retries": cls.MAX_RETRIES,
             "retry_delay": cls.RETRY_DELAY,
