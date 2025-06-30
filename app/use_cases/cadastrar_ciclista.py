@@ -2,10 +2,12 @@ from fastapi import HTTPException
 
 from app.domain.entities.ciclista import RequisicaoCadastroCiclista, CartaoDeCredito, Ciclista, StatusEnum
 from app.domain.repositories.ciclista_repository import CiclistaRepository
+from app.domain.repositories.externo_repository import ExternoRepository
 
 class CadastrarCiclista:
-    def __init__(self, repository: CiclistaRepository):
+    def __init__(self, repository: CiclistaRepository, externo_repo: ExternoRepository):
         self.repository = repository
+        self.externo_repo = externo_repo
 
     def execute(self, dados: RequisicaoCadastroCiclista) -> Ciclista:
         cic = dados.ciclista
@@ -20,6 +22,14 @@ class CadastrarCiclista:
             raise HTTPException(
                 status_code=422,
                 detail="E-mail já cadastrado"
+            )
+
+        # Validar cartão de crédito no microsserviço externo
+        resultado_validacao = self.externo_repo.validar_cartao_credito(dados.meioDePagamento.model_dump())
+        if not resultado_validacao["valido"]:
+            raise HTTPException(
+                status_code=422,
+                detail=f"Cartão de crédito inválido: {resultado_validacao['mensagem']}"
             )
 
         novo_id = self.repository.proximo_id()

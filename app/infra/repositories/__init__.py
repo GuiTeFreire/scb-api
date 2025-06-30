@@ -1,7 +1,11 @@
-from app.infra.repositories.fake_aluguel_repository import FakeAluguelRepository
-from app.infra.repositories.fake_ciclista_repository import FakeCiclistaRepository
-from app.infra.repositories.fake_funcionario_repository import FakeFuncionarioRepository
+from .fake_ciclista_repository import FakeCiclistaRepository
+from .fake_funcionario_repository import FakeFuncionarioRepository
+from .fake_aluguel_repository import FakeAluguelRepository
+from .fake_externo_repository import FakeExternoRepository
+from .fake_equipamento_repository import FakeEquipamentoRepository
 
-fake_aluguel_repository = FakeAluguelRepository()
 fake_ciclista_repository = FakeCiclistaRepository()
 fake_funcionario_repository = FakeFuncionarioRepository()
+fake_aluguel_repository = FakeAluguelRepository()
+fake_externo_repository = FakeExternoRepository()
+fake_equipamento_repository = FakeEquipamentoRepository()

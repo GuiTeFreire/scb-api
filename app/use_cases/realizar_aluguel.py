@@ -5,28 +5,28 @@ from app.domain.entities.aluguel import Aluguel, NovoAluguel
 from app.domain.entities.ciclista import StatusEnum
 from app.domain.repositories.aluguel_repository import AluguelRepository
 from app.domain.repositories.ciclista_repository import CiclistaRepository
+from app.domain.repositories.externo_repository import ExternoRepository
+from app.domain.repositories.equipamento_repository import EquipamentoRepository
 from app.use_cases.verificar_permissao_aluguel import VerificarPermissaoAluguel
 
 class RealizarAluguel:
     def __init__(
         self,
         aluguel_repo: AluguelRepository,
-        ciclista_repo: CiclistaRepository
+        ciclista_repo: CiclistaRepository,
+        externo_repo: ExternoRepository,
+        equipamento_repo: EquipamentoRepository
     ):
         self.aluguel_repo = aluguel_repo
         self.ciclista_repo = ciclista_repo
+        self.externo_repo = externo_repo
+        self.equipamento_repo = equipamento_repo
         self.verificador = VerificarPermissaoAluguel(ciclista_repo, aluguel_repo)
 
     def execute(self, dados: NovoAluguel) -> Aluguel:
-        # 1. Sistema solicita número da tranca (já recebido em dados.trancaInicio)
-        
-        # 2. Ciclista informa número da tranca (já recebido)
-        
-        # 3. Sistema valida número da tranca [A1]
         if dados.trancaInicio <= 0:
             raise HTTPException(status_code=422, detail="Número da tranca inválido")
         
-        # 4. Sistema verifica se ciclista pode pegar bicicleta [R1][R5][E1][E4]
         ciclista = self.ciclista_repo.buscar_por_id(dados.ciclista)
         if not ciclista or ciclista.status != StatusEnum.ATIVO:
             raise HTTPException(status_code=422, detail="Ciclista não está ativo")
@@ -34,44 +34,37 @@ class RealizarAluguel:
         if not self.verificador.execute(dados.ciclista):
             raise HTTPException(status_code=422, detail="Ciclista já possui aluguel ativo")
         
-        # 5. Verificar se tranca está ocupada (pré-condição)
-        # if dados.trancaInicio.status != "OCUPADA":
-        #     raise HTTPException(status_code=422, detail="Tranca não está ocupada")
+        # Verificar se tranca está ocupada (integração com microsserviço de equipamento)
+        tranca = self.equipamento_repo.obter_tranca(dados.trancaInicio)
+        if not tranca:
+            raise HTTPException(status_code=422, detail="Tranca não encontrada")
         
-        # 6. Sistema lê número da bicicleta presa na tranca [E2]
-        id_bicicleta = 5678 # Mock da bicicleta
+        if tranca["status"] != "OCUPADA":
+            raise HTTPException(status_code=422, detail="Tranca não está ocupada")
         
-        # 7. Verificar se bicicleta não está em reparo [E4][R5]
-        # if id_bicicleta.status != "EM_REPARO":
-        #     raise HTTPException(status_code=422, detail="Bicicleta em reparo")
+        bicicleta_na_tranca = self.equipamento_repo.obter_bicicleta_na_tranca(dados.trancaInicio)
+        if not bicicleta_na_tranca:
+            raise HTTPException(status_code=422, detail="Nenhuma bicicleta encontrada na tranca")
         
-        # 8. Sistema envia cobrança [R2]
+        id_bicicleta = bicicleta_na_tranca["id"]
+        
+        bicicleta = self.equipamento_repo.obter_bicicleta(id_bicicleta)
+        if not bicicleta:
+            raise HTTPException(status_code=422, detail="Bicicleta não encontrada")
+        
+        if bicicleta["status"] in ["EM_REPARO", "APOSENTADA"]:
+            raise HTTPException(status_code=422, detail="Bicicleta em reparo ou aposentada")
+        
+        # Sistema envia cobrança [R2] (integração com microsserviço externo)
         valor_cobranca = 10.00
-        print(f"[MOCK] Cobrança de R$ {valor_cobranca:.2f} enviada para Administradora CC")
-        
-        # Simular chamada para microsserviço externo
-        def simular_chamada_cobranca(valor: float, ciclista_id: int) -> dict:
-            return {
-                "id_cobranca": 1234,
-                "status": "APROVADA",
-                "valor": valor,
-                "ciclista_id": ciclista_id,
-                "data_cobranca": datetime.now().isoformat()
-            }
+        resultado_cobranca = self.externo_repo.realizar_cobranca(dados.ciclista, valor_cobranca)
+        cobranca_id = None
+        if resultado_cobranca["status"] != "APROVADA":
+            self.externo_repo.incluir_cobranca_fila(dados.ciclista, valor_cobranca)
+            # Não lança exceção, apenas registra cobrança pendente
+        else:
+            cobranca_id = resultado_cobranca["id_cobranca"]
 
-        resultado_cobranca = simular_chamada_cobranca(valor_cobranca, dados.ciclista)
-        id_cobranca = resultado_cobranca["id_cobranca"]
-        
-        # 9. Administradora CC confirma pagamento [E3]
-        # if resultado_cobranca["status"] != "APROVADA":
-        #     print(f"[MOCK] Pagamento não autorizado - registrando para cobrança posterior")
-        #     raise HTTPException(
-        #         status_code=422,
-        #         detail="Pagamento não foi concluído"
-        #     )
-        # print(f"[MOCK] Pagamento confirmado pela Administradora CC - ID: {id_cobranca}")
-        
-        # 10. Sistema registra dados da retirada [R3]
         aluguel = Aluguel(
             ciclista=dados.ciclista,
             trancaInicio=dados.trancaInicio,
@@ -79,16 +72,20 @@ class RealizarAluguel:
             horaInicio=datetime.now(),
             trancaFim=None,
             horaFim=None,
-            cobranca=id_cobranca
+            cobranca=cobranca_id
         )
         
-        # 11. Sistema altera status da bicicleta para "em uso"
-        print(f"[MOCK] Bicicleta {id_bicicleta} teve status alterado para EM_USO")
+        # Sistema altera status da bicicleta para "em uso" (integração com microsserviço de equipamento)
+        self.equipamento_repo.alterar_status_bicicleta(id_bicicleta, "EM_USO")
         
-        # 12. Sistema altera status da tranca para "livre"
-        print(f"[MOCK] Tranca {dados.trancaInicio} teve status alterado para LIVRE")
+        # Sistema altera status da tranca para "livre" (integração com microsserviço de equipamento)
+        self.equipamento_repo.alterar_status_tranca(dados.trancaInicio, "LIVRE")
         
-        # 13. Sistema envia email [R4]
-        print(f"[MOCK] E-mail enviado ao ciclista {dados.ciclista} com dados do aluguel.")
+        # Sistema envia email [R4] (integração com microsserviço externo)
+        self.externo_repo.enviar_email(
+            email=ciclista.email,
+            assunto="Aluguel realizado com sucesso",
+            mensagem=f"Seu aluguel foi realizado. Bicicleta: {id_bicicleta}, Tranca: {dados.trancaInicio}"
+        )
         
         return self.aluguel_repo.salvar(aluguel)
