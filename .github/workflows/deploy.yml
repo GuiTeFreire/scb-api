@@ -22,7 +22,6 @@ jobs:
           key: ${{ secrets.EC2_SSH_KEY }}
           source: "."
           target: "~/scb-api"
-          debug: true
 
       - name: SSH into EC2 and deploy
         uses: appleboy/ssh-action@v1.0.3
