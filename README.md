@@ -47,6 +47,10 @@ Este projeto segue os princípios da **Clean Architecture**, com uma separação
 
 - `GET /restaurarBanco` — Restaurar os dados iniciais do microsserviço para testes ou reset
 
+## Como conectar via ssh no windows
+
+- ssh -i "C:\Users\guite\OneDrive\Documentos\Faculdade\8o Período\ES2 - Paulo\scb-api\scb-api-keys.pem" ubuntu@15.228.164.101
+
 ## Como executar localmente
 
 1. Ativar o ambiente virtual com: `venv\Scripts\activate`
