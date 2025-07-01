@@ -8,7 +8,7 @@ on:
 jobs:
   deploy:
     name: Deploy API to EC2 via SCP and SSH
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
 
     steps:
       - name: Checkout code
@@ -22,6 +22,7 @@ jobs:
           key: ${{ secrets.EC2_SSH_KEY }}
           source: "."
           target: "~/scb-api"
+          debug: true
 
       - name: SSH into EC2 and deploy
         uses: appleboy/ssh-action@v1.0.3
