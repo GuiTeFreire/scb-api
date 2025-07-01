@@ -61,7 +61,6 @@ class RealizarAluguel:
         cobranca_id = None
         if resultado_cobranca["status"] != "APROVADA":
             self.externo_repo.incluir_cobranca_fila(dados.ciclista, valor_cobranca)
-            # Não lança exceção, apenas registra cobrança pendente
         else:
             cobranca_id = resultado_cobranca["id_cobranca"]
 
