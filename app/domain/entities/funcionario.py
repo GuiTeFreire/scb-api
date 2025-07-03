@@ -3,7 +3,7 @@ from typing import Optional
 
 class NovoFuncionario(BaseModel):
     senha: str
-    confirmacaoSenha: Optional[str] = None  # se for usado
+    confirmacaoSenha: Optional[str] = None
     email: EmailStr
     nome: str
     idade: int

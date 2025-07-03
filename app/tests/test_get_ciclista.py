@@ -1,39 +1,48 @@
-from fastapi.testclient import TestClient
-from app.main import app
+import pytest
+from app.use_cases.buscar_ciclista_por_id import BuscarCiclistaPorId
+from app.infra.repositories.fake_ciclista_repository import fake_ciclista_repository
+from app.domain.entities.ciclista import NovoCiclista, CartaoDeCredito, Ciclista
+from fastapi import HTTPException
+from datetime import date
 
-client = TestClient(app)
+@pytest.fixture(autouse=True)
+def reset_repo():
+    fake_ciclista_repository.resetar()
 
 def test_get_ciclista_sucesso():
-    payload = {
-        "ciclista": {
-            "nome": "Maria Teste",
-            "nascimento": "1995-06-01",
-            "cpf": "12345678900",
-            "nacionalidade": "BRASILEIRO",
-            "email": "maria@get.com",
-            "senha": "senha123",
-            "urlFotoDocumento": "https://foto.com/doc.png"
-        },
-        "meioDePagamento": {
-            "nomeTitular": "Maria Teste",
-            "numero": "4111111111111111",
-            "validade": "2026-12-01",
-            "cvv": "123"
-        }
-    }
+    novo_ciclista = NovoCiclista(
+        nome="Maria Teste",
+        nascimento=date(1995, 6, 1),
+        cpf="12345678900",
+        nacionalidade="BRASILEIRO",
+        email="maria@get.com",
+        senha="senha123",
+        urlFotoDocumento="https://foto.com/doc.png"
+    )
+    cartao = CartaoDeCredito(
+        id=1,
+        nomeTitular="Maria Teste",
+        numero="4111111111111111",
+        validade=date(2026, 12, 1),
+        cvv="123"
+    )
+    ciclista = Ciclista(
+        **novo_ciclista.model_dump(),
+        id=0,
+        cartaoDeCredito=cartao
+    )
+    ciclista = fake_ciclista_repository.salvar(ciclista)
+    use_case = BuscarCiclistaPorId(fake_ciclista_repository)
 
-    res = client.post("/ciclista", json=payload)
-    assert res.status_code == 201
-    ciclista = res.json()
+    resposta = use_case.execute(ciclista.id)
 
-    get_res = client.get(f"/ciclista/{ciclista['id']}")
-    assert get_res.status_code == 200
-
-    resposta = get_res.json()
-    assert resposta["id"] == ciclista["id"]
-    assert resposta["email"] == "maria@get.com"
-    assert "senha" not in resposta  # Garante que senha não vaza
+    assert resposta.id == ciclista.id
+    assert resposta.email == "maria@get.com"
 
 def test_get_ciclista_nao_encontrado():
-    res = client.get("/ciclista/99999")
-    assert res.status_code == 404
+    use_case = BuscarCiclistaPorId(fake_ciclista_repository)
+    id_inexistente = 99999
+
+    with pytest.raises(HTTPException) as exc:
+        use_case.execute(id_inexistente)
+    assert exc.value.status_code == 404

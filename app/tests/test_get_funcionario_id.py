@@ -1,34 +1,36 @@
-from app.main import app
-from fastapi.testclient import TestClient
+import pytest
+from app.use_cases.buscar_funcionario_por_id import BuscarFuncionarioPorId
+from app.infra.repositories.fake_funcionario_repository import fake_funcionario_repository
+from app.domain.entities.funcionario import NovoFuncionario
+from fastapi import HTTPException
 
-client = TestClient(app)
+@pytest.fixture(autouse=True)
+def reset_repo():
+    fake_funcionario_repository.resetar()
 
 def test_get_funcionario_por_id_sucesso():
-    client.get("/restaurarBanco")
+    novo_funcionario = NovoFuncionario(
+        nome="Joana Silva",
+        idade=40,
+        funcao="Técnico",
+        cpf="22222222222",
+        email="joana@empresa.com",
+        senha="senha456"
+    )
+    funcionario = fake_funcionario_repository.salvar(novo_funcionario)
+    use_case = BuscarFuncionarioPorId(fake_funcionario_repository)
 
-    payload = {
-        "nome": "Joana Silva",
-        "idade": 40,
-        "funcao": "Técnico",
-        "cpf": "22222222222",
-        "email": "joana@empresa.com",
-        "senha": "senha456"
-    }
+    resultado = use_case.execute(funcionario.matricula)
 
-    res = client.post("/funcionario", json=payload)
-    assert res.status_code == 200
-    matricula = res.json()["matricula"]
-
-    res_get = client.get(f"/funcionario/{matricula}")
-    assert res_get.status_code == 200
-    funcionario = res_get.json()
-    assert funcionario["email"] == "joana@empresa.com"
-    assert funcionario["nome"] == "Joana Silva"
-    assert funcionario["cpf"] == "22222222222"
+    assert resultado.email == "joana@empresa.com"
+    assert resultado.nome == "Joana Silva"
+    assert resultado.cpf == "22222222222"
 
 def test_get_funcionario_por_id_inexistente():
-    client.get("/restaurarBanco")
+    use_case = BuscarFuncionarioPorId(fake_funcionario_repository)
+    matricula_inexistente = 9999
 
-    res_get = client.get("/funcionario/9999")
-    assert res_get.status_code == 404
-    assert res_get.json().get("mensagem") == "Funcionário não encontrado"
+    with pytest.raises(HTTPException) as exc:
+        use_case.execute(matricula_inexistente)
+    assert exc.value.status_code == 404
+    assert exc.value.detail == "Funcionário não encontrado"

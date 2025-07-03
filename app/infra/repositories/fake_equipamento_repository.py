@@ -43,7 +43,7 @@ class FakeEquipamentoRepository(EquipamentoRepository):
             "modelo": "MockModelo",
             "ano": "2020",
             "numero": 5678,
-            "status": "EM_USO"
+            "status": "DISPONIVEL"
         }
 
 fake_equipamento_repository = FakeEquipamentoRepository() 

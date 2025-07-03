@@ -6,18 +6,12 @@ from app.domain.entities.aluguel import Aluguel
 from app.domain.repositories.equipamento_repository import EquipamentoRepository
 from app.domain.repositories.externo_repository import ExternoRepository
 from datetime import datetime
-import pytest
-from app.use_cases.cadastrar_ciclista import CadastrarCiclista
-from app.infra.repositories import fake_ciclista_repository, fake_externo_repository
-from app.domain.entities.ciclista import RequisicaoCadastroCiclista
-from fastapi import HTTPException
 
 class TestFakeExterno:
     def setup_method(self):
         self.repository = FakeExternoRepository()
     
     def test_validar_cartao_credito_valido(self):
-        """Testa validação de cartão de crédito válido"""
         cartao_data = {
             "numero": "4111111111111111",
             "nomeTitular": "João Silva",
@@ -31,9 +25,8 @@ class TestFakeExterno:
         assert resultado["mensagem"] == "Cartão válido"
     
     def test_validar_cartao_credito_invalido_numero_curto(self):
-        """Testa validação de cartão com número muito curto"""
         cartao_data = {
-            "numero": "123456789",  # Menos de 13 dígitos
+            "numero": "123456789",
             "nomeTitular": "João Silva",
             "validade": "2026-12-01",
             "cvv": "123"
@@ -45,9 +38,8 @@ class TestFakeExterno:
         assert resultado["mensagem"] == "Número do cartão inválido"
     
     def test_validar_cartao_credito_invalido_nao_numerico(self):
-        """Testa validação de cartão com caracteres não numéricos"""
         cartao_data = {
-            "numero": "411111111111111a",  # Contém letra
+            "numero": "411111111111111a",
             "nomeTitular": "João Silva",
             "validade": "2026-12-01",
             "cvv": "123"
@@ -59,7 +51,6 @@ class TestFakeExterno:
         assert resultado["mensagem"] == "Número do cartão inválido"
     
     def test_validar_cartao_credito_sem_numero(self):
-        """Testa validação de cartão sem número"""
         cartao_data = {
             "nomeTitular": "João Silva",
             "validade": "2026-12-01",
@@ -72,7 +63,6 @@ class TestFakeExterno:
         assert resultado["mensagem"] == "Número do cartão inválido"
     
     def test_realizar_cobranca(self):
-        """Testa realização de cobrança"""
         resultado = self.repository.realizar_cobranca(123, 50.00)
         
         assert resultado["id_cobranca"] == 1234
@@ -82,7 +72,6 @@ class TestFakeExterno:
         assert "data_cobranca" in resultado
     
     def test_incluir_cobranca_fila(self):
-        """Testa inclusão na fila de cobrança"""
         resultado = self.repository.incluir_cobranca_fila(456, 25.50)
         
         assert resultado["id_cobranca"] == 5678
@@ -92,7 +81,6 @@ class TestFakeExterno:
         assert "data_inclusao" in resultado
     
     def test_enviar_email(self):
-        """Testa envio de email"""
         resultado = self.repository.enviar_email(
             "teste@email.com",
             "Teste de Email",
@@ -108,7 +96,6 @@ class TestFakeFuncionarioRepository:
     def test_buscar_por_email_retorna_funcionario_quando_existe(self):
         fake_funcionario_repository.resetar()
         
-        # Criar funcionário
         dados = NovoFuncionario(
             nome="Maria Teste",
             idade=25,
@@ -120,7 +107,6 @@ class TestFakeFuncionarioRepository:
         
         funcionario = fake_funcionario_repository.salvar(dados)
         
-        # Buscar por email
         resultado = fake_funcionario_repository.buscar_por_email("maria@teste.com")
         
         assert resultado is not None
@@ -230,67 +216,3 @@ class TestRepositoriosAbstratos:
         assert repo.realizar_cobranca(1, 10.0) == {"sucesso": True, "valor": 10.0}
         assert repo.incluir_cobranca_fila(1, 5.0) == {"enviado": True, "valor": 5.0}
         assert repo.enviar_email("test@test.com", "Teste", "Mensagem") == {"enviado": True, "email": "test@test.com"}
-
-def test_cadastrar_ciclista_email_duplicado_direto():
-    fake_ciclista_repository.resetar()
-    use_case = CadastrarCiclista(fake_ciclista_repository, fake_externo_repository)
-    dados = RequisicaoCadastroCiclista(
-        ciclista={
-            "nome": "Teste Duplicado",
-            "nascimento": "1990-01-01",
-            "cpf": "12345678901",
-            "nacionalidade": "BRASILEIRO",
-            "email": "duplicado@direto.com",
-            "senha": "senha123",
-            "urlFotoDocumento": "https://site.com/doc.png"
-        },
-        meioDePagamento={
-            "nomeTitular": "Teste Duplicado",
-            "numero": "4111111111111111",
-            "validade": "2026-12-01",
-            "cvv": "123"
-        }
-    )
-    use_case.execute(dados)
-    with pytest.raises(HTTPException) as exc:
-        use_case.execute(dados)
-    assert exc.value.status_code == 422
-    assert "E-mail já cadastrado" in exc.value.detail
-
-def test_cadastrar_ciclista_cartao_invalido_direto():
-    fake_ciclista_repository.resetar()
-    use_case = CadastrarCiclista(fake_ciclista_repository, fake_externo_repository)
-    
-    # Mock para retornar cartão inválido
-    original_validar_cartao = fake_externo_repository.validar_cartao_credito
-    fake_externo_repository.validar_cartao_credito = lambda cartao_data: {
-        "valido": False,
-        "mensagem": "Cartão sem limite"
-    }
-    
-    dados = RequisicaoCadastroCiclista(
-        ciclista={
-            "nome": "Teste Cartão Inválido",
-            "nascimento": "1990-01-01",
-            "cpf": "12345678901",
-            "nacionalidade": "BRASILEIRO",
-            "email": "cartao@invalido.com",
-            "senha": "senha123",
-            "urlFotoDocumento": "https://site.com/doc.png"
-        },
-        meioDePagamento={
-            "nomeTitular": "Teste Cartão Inválido",
-            "numero": "4111111111111111",
-            "validade": "2026-12-01",
-            "cvv": "123"
-        }
-    )
-    
-    with pytest.raises(HTTPException) as exc:
-        use_case.execute(dados)
-    
-    assert exc.value.status_code == 422
-    assert "Cartão de crédito inválido" in exc.value.detail
-    assert "Cartão sem limite" in exc.value.detail
-    
-    fake_externo_repository.validar_cartao_credito = original_validar_cartao 

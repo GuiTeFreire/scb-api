@@ -1,43 +1,54 @@
-from fastapi.testclient import TestClient
-from app.main import app
+import pytest
+from app.use_cases.obter_cartao_de_credito import ObterCartaoDeCredito
+from app.infra.repositories.fake_ciclista_repository import fake_ciclista_repository
+from app.domain.entities.ciclista import NovoCiclista, CartaoDeCredito, Ciclista
+from fastapi import HTTPException
+from datetime import date
 
-client = TestClient(app)
+@pytest.fixture(autouse=True)
+def reset_repo():
+    fake_ciclista_repository.resetar()
 
 def test_get_cartao_credito_sucesso():
-    client.get("/restaurarBanco")
+    novo_ciclista = NovoCiclista(
+        nome="Carlos",
+        nascimento=date(1980, 1, 1),
+        cpf="12345678901",
+        nacionalidade="BRASILEIRO",
+        email="carlos@bike.com",
+        senha="senha123",
+        urlFotoDocumento="https://foto.com/doc.png"
+    )
+    cartao = CartaoDeCredito(
+        id=1,
+        nomeTitular="Carlos",
+        numero="4111111111111111",
+        validade=date(2026, 10, 1),
+        cvv="123"
+    )
+    ciclista = Ciclista(
+        **novo_ciclista.model_dump(),
+        id=0,
+        cartaoDeCredito=cartao
+    )
+    ciclista = fake_ciclista_repository.salvar(ciclista)
+    use_case = ObterCartaoDeCredito(fake_ciclista_repository)
 
-    payload = {
-        "ciclista": {
-            "nome": "Carlos",
-            "nascimento": "1980-01-01",
-            "cpf": "12345678901",
-            "nacionalidade": "BRASILEIRO",
-            "email": "carlos@bike.com",
-            "senha": "senha123",
-            "urlFotoDocumento": "https://foto.com/doc.png"
-        },
-        "meioDePagamento": {
-            "nomeTitular": "Carlos",
-            "numero": "4111111111111111",
-            "validade": "2026-10-01",
-            "cvv": "123"
-        }
-    }
+    cartao_retornado = use_case.execute(ciclista.id)
 
-    res = client.post("/ciclista", json=payload)
-    assert res.status_code == 201
-    id_ciclista = res.json()["id"]
-
-    res_get = client.get(f"/cartaoDeCredito/{id_ciclista}")
-    assert res_get.status_code == 200
-    assert res_get.json()["nomeTitular"] == "Carlos"
+    assert cartao_retornado.nomeTitular == "Carlos"
 
 def test_get_cartao_credito_erro_ciclista_nao_encontrado():
-    client.get("/restaurarBanco")
+    use_case = ObterCartaoDeCredito(fake_ciclista_repository)
+    id_inexistente = 999
 
-    res_get = client.get("/cartaoDeCredito/999")
-    assert res_get.status_code == 404
+    with pytest.raises(HTTPException) as exc:
+        use_case.execute(id_inexistente)
+    assert exc.value.status_code == 404
 
 def test_get_cartao_credito_id_invalido():
-    res = client.get("/cartaoDeCredito/abc")
-    assert res.status_code == 422
+    use_case = ObterCartaoDeCredito(fake_ciclista_repository)
+    id_invalido = "abc"
+
+    with pytest.raises(Exception):
+        use_case.execute(id_invalido)
