@@ -1,4 +1,3 @@
-import pytest
 from app.dependencies.ciclista import (
     get_cadastrar_ciclista_use_case,
     get_buscar_ciclista_use_case,

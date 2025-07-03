@@ -31,7 +31,7 @@ def test_edicao_ciclista_com_sucesso():
         }
     )
     ciclista = use_case_cadastro.execute(payload)
-    use_case_edicao = AtualizarCiclista(fake_ciclista_repository)
+    use_case_edicao = AtualizarCiclista(fake_ciclista_repository, fake_externo_repository)
     novo_dados = EdicaoCiclista(
         nome="Ana Editada",
         nascimento=date(1992, 3, 10),
@@ -45,7 +45,7 @@ def test_edicao_ciclista_com_sucesso():
     assert resultado.email == "ana-editada@teste.com"
 
 def test_edicao_ciclista_inexistente():
-    use_case_edicao = AtualizarCiclista(fake_ciclista_repository)
+    use_case_edicao = AtualizarCiclista(fake_ciclista_repository, fake_externo_repository)
     novo_dados = EdicaoCiclista(
         nome="Fulano",
         nascimento=date(2000, 1, 1),
@@ -78,7 +78,7 @@ def test_edicao_ciclista_com_cpf_e_passaporte():
         }
     )
     ciclista = use_case_cadastro.execute(payload)
-    use_case_edicao = AtualizarCiclista(fake_ciclista_repository)
+    use_case_edicao = AtualizarCiclista(fake_ciclista_repository, fake_externo_repository)
     novo_dados = EdicaoCiclista(
         nome="Fulano",
         nascimento=date(1990, 1, 1),

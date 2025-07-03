@@ -15,7 +15,7 @@ def get_buscar_ciclista_use_case() -> BuscarCiclistaPorId:
     return BuscarCiclistaPorId(fake_ciclista_repository)
 
 def get_atualizar_ciclista_use_case() -> AtualizarCiclista:
-    return AtualizarCiclista(fake_ciclista_repository)
+    return AtualizarCiclista(fake_ciclista_repository, fake_externo_repository)
 
 def get_ativar_ciclista_use_case() -> AtivarCiclista:
     return AtivarCiclista(fake_ciclista_repository)
@@ -24,7 +24,7 @@ def get_obter_cartao_use_case() -> ObterCartaoDeCredito:
     return ObterCartaoDeCredito(fake_ciclista_repository)
 
 def get_atualizar_cartao_use_case() -> AtualizarCartaoDeCredito:
-    return AtualizarCartaoDeCredito(fake_ciclista_repository)
+    return AtualizarCartaoDeCredito(fake_ciclista_repository, fake_externo_repository)
 
 def get_verificar_email_use_case() -> VerificarEmailExistente:
     return VerificarEmailExistente(fake_ciclista_repository)

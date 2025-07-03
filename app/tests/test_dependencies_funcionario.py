@@ -1,4 +1,3 @@
-import pytest
 from app.dependencies.funcionario import (
     get_cadastrar_funcionario_use_case,
     get_listar_funcionarios_use_case,

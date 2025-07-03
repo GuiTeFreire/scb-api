@@ -4,6 +4,7 @@ from app.infra.repositories.fake_ciclista_repository import fake_ciclista_reposi
 from app.domain.entities.ciclista import NovoCiclista, CartaoDeCredito, Ciclista, NovoCartaoDeCredito, StatusEnum
 from fastapi import HTTPException
 from datetime import date
+from app.infra.repositories.fake_externo_repository import fake_externo_repository
 
 @pytest.fixture(autouse=True)
 def reset_repo():
@@ -34,7 +35,7 @@ def test_atualizar_cartao_com_sucesso():
     )
     ciclista = fake_ciclista_repository.salvar(ciclista)
 
-    use_case = AtualizarCartaoDeCredito(fake_ciclista_repository)
+    use_case = AtualizarCartaoDeCredito(fake_ciclista_repository, fake_externo_repository)
     update = NovoCartaoDeCredito(
         nomeTitular="Nome Atualizado",
         numero="4222222222222",
@@ -48,7 +49,7 @@ def test_atualizar_cartao_com_sucesso():
     assert resultado.cvv == "456"
 
 def test_atualizar_cartao_ciclista_inexistente():
-    use_case = AtualizarCartaoDeCredito(fake_ciclista_repository)
+    use_case = AtualizarCartaoDeCredito(fake_ciclista_repository, fake_externo_repository)
     update = NovoCartaoDeCredito(
         nomeTitular="Inexistente",
         numero="4000000000000",
