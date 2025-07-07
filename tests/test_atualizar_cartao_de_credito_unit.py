@@ -41,8 +41,8 @@ class TestAtualizarCartaoDeCredito:
         self.mock_repository.buscar_por_id.assert_called_once_with(id_ciclista)
         self.mock_externo_repo.enviar_email.assert_called_once_with(
             email="joao@teste.com",
-            assunto="Cadstro  realizado com sucesso",
-            mensagem="Seu cadastro foi realizado. Clique no link para ativar sua conta."
+            assunto="Cartão atualizado",
+            mensagem="Os dados do seu cartão foram atualizados com sucesso"
         )
         self.mock_repository.atualizar.assert_called_once()
         

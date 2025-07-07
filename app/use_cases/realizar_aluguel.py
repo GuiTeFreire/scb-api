@@ -28,7 +28,10 @@ class RealizarAluguel:
             raise HTTPException(status_code=422, detail="Número da tranca inválido")
         
         ciclista = self.ciclista_repo.buscar_por_id(dados.ciclista)
-        if not ciclista or ciclista.status != StatusEnum.ATIVO:
+        if not ciclista:
+            raise HTTPException(status_code=422, detail="Ciclista não existe")
+        
+        if ciclista.status != StatusEnum.ATIVO:
             raise HTTPException(status_code=422, detail="Ciclista não está ativo")
         
         if not self.verificador.execute(dados.ciclista):

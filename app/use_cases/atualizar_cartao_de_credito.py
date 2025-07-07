@@ -19,8 +19,8 @@ class AtualizarCartaoDeCredito:
         # Sistema envia email (integração com microsserviço externo)
         self.externo_repo.enviar_email(
             email=ciclista.email,
-            assunto="Cadstro  realizado com sucesso",
-            mensagem=f"Seu cadastro foi realizado. Clique no link para ativar sua conta."
+            assunto="Cartão atualizado",
+            mensagem="Os dados do seu cartão foram atualizados com sucesso"
         )
 
         ciclista.cartaoDeCredito = novo_cartao.model_copy(update={"id": id_ciclista})

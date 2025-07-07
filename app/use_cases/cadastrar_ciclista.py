@@ -46,7 +46,7 @@ class CadastrarCiclista:
         self.externo_repo.enviar_email(
             email=ciclista.email,
             assunto="Cadstro  realizado com sucesso",
-            mensagem=f"Seu cadastro foi realizado. Clique no link para ativar sua conta."
+            mensagem="Seu cadastro foi realizado. Clique no link para ativar sua conta."
         )
 
         return self.repository.salvar(ciclista)

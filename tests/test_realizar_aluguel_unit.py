@@ -120,7 +120,7 @@ class TestRealizarAluguel:
             use_case.execute(dados)
         
         assert exc_info.value.status_code == 422
-        assert exc_info.value.detail == "Ciclista não está ativo"
+        assert exc_info.value.detail == "Ciclista não existe"
         self.mock_ciclista_repo.buscar_por_id.assert_called_once_with(1)
     
     def test_execute_erro_ciclista_inativo(self):

@@ -20,7 +20,7 @@ class AtualizarCiclista:
         # Sistema envia email (integração com microsserviço externo)
         self.externo_repo.enviar_email(
             email=ciclista.email,
-            assunto="Cadstro  realizado com sucesso",
-            mensagem=f"Seu cadastro foi realizado. Clique no link para ativar sua conta."
+            assunto="Dados atualizados",
+            mensagem="Seus dados pessoais foram atualizados com sucesso."
         )
         return ciclista
