@@ -50,12 +50,6 @@ class TestRealizarAluguel:
             # Mock da bicicleta disponível
             self.mock_equipamento_repo.obter_bicicleta.return_value = {"status": "DISPONIVEL"}
             
-            # Mock da cobrança aprovada
-            self.mock_externo_repo.realizar_cobranca.return_value = {
-                "status": "APROVADA",
-                "id_cobranca": 123
-            }
-            
             # Criar use case com mocks
             use_case = RealizarAluguel(
                 self.mock_aluguel_repo,
