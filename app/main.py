@@ -2,6 +2,8 @@ from fastapi import FastAPI, Request, HTTPException
 from fastapi.responses import JSONResponse
 from fastapi.exceptions import RequestValidationError
 from app.api import ciclista, funcionario, restaurar
+from dotenv import load_dotenv
+load_dotenv()
 
 app = FastAPI(
     title="SCB - Sistema de Controle de Bicicletário",

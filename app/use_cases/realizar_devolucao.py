@@ -17,7 +17,7 @@ class RealizarDevolucao:
     ):
         self.aluguel_repo = aluguel_repo
         self.ciclista_repo = ciclista_repo
-        self.servico_externo_repo = externo_repo
+        self.externo_repo = externo_repo
         self.equipamento_repo = equipamento_repo
 
     def execute(self, payload) -> Devolucao:
@@ -42,32 +42,34 @@ class RealizarDevolucao:
 
         aluguel_ativo.horaFim = datetime.now()
         aluguel_ativo.trancaFim = id_tranca
-        aluguel_ativo.cobranca = valor_total
 
-        # Sistema altera status da bicicleta para "disponível" (integração com microsserviço de equipamento)
-        self.equipamento_repo.alterar_status_bicicleta(id_bicicleta, "DISPONÍVEL")
-
-        # Sistema altera status da tranca para "ocupada" (integração com microsserviço de equipamento)
-        self.equipamento_repo.alterar_status_tranca(id_tranca, "OCUPADA")
+        # Sistema tranca a tranca (associa bicicleta e deixa OCUPADA)
+        if not self.equipamento_repo.trancar_tranca(id_tranca, id_bicicleta):
+            raise HTTPException(status_code=422, detail="Falha ao trancar a tranca no microsserviço de equipamento.")
 
         # Sistema envia email [R3] (integração com microsserviço externo)
         ciclista = self.ciclista_repo.buscar_por_id(aluguel_ativo.ciclista)
         if ciclista:
-            self.servico_externo_repo.enviar_email(
+            self.externo_repo.enviar_email(
                 email=ciclista.email,
                 assunto="Devolução realizada com sucesso",
                 mensagem=f"Sua devolução foi realizada. Bicicleta: {id_bicicleta}, Tranca: {id_tranca}, Valor: R$ {valor_total:.2f}"
             )
 
-        # Sistema inclui cobrança extra na fila se houver valor adicional (integração com microsserviço externo)
+        # Sistema cobra valor extra, se houver
+        cobranca_extra_id = None
         if valor_extra > 0:
-            self.servico_externo_repo.incluir_cobranca_fila(aluguel_ativo.ciclista, valor_extra)
+            resultado_cobranca_extra = self.externo_repo.realizar_cobranca(aluguel_ativo.ciclista, valor_extra)
+            print("[DEBUG] Resultado da cobrança extra:", resultado_cobranca_extra)
+            cobranca_extra_id = resultado_cobranca_extra.get("id_cobranca") or resultado_cobranca_extra.get("id")
 
+        cobranca_id_final = cobranca_extra_id if cobranca_extra_id is not None else int(round(aluguel_ativo.cobranca))
+        print(f"[DEBUG] Valor total cobrado: {valor_total}, Valor extra: {valor_extra}")
         return Devolucao(
             bicicleta=aluguel_ativo.bicicleta,
             horaInicio=aluguel_ativo.horaInicio,
             trancaFim=aluguel_ativo.trancaFim,
             horaFim=aluguel_ativo.horaFim,
-            cobranca=int(round(aluguel_ativo.cobranca)),
+            cobranca=cobranca_id_final,
             ciclista=aluguel_ativo.ciclista
         )

@@ -25,11 +25,11 @@ class CadastrarCiclista:
             )
 
         # Validar cartão de crédito no microsserviço externo
-        resultado_validacao = self.externo_repo.validar_cartao_credito(dados.meioDePagamento.model_dump())
-        if not resultado_validacao["valido"]:
+        resultado_validacao = self.externo_repo.validar_cartao_credito(dados.meioDePagamento.model_dump(mode="json"))
+        if not resultado_validacao.get("valido", False):
             raise HTTPException(
                 status_code=422,
-                detail=f"Cartão de crédito inválido: {resultado_validacao['mensagem']}"
+                detail=f"Cartão de crédito inválido: {resultado_validacao.get('mensagem', 'Erro desconhecido')}"
             )
 
         novo_id = self.repository.proximo_id()

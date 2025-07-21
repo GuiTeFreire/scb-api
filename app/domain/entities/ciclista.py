@@ -2,6 +2,7 @@ from pydantic import BaseModel, EmailStr, Field, field_validator
 from typing import Optional
 from datetime import date
 from enum import Enum
+import re
 
 class StatusEnum(str, Enum):
     AGUARDANDO_CONFIRMACAO: str = "AGUARDANDO_CONFIRMACAO"
@@ -26,7 +27,7 @@ class NovoCiclista(BaseModel):
 class NovoCartaoDeCredito(BaseModel):
     nomeTitular: str
     numero: str
-    validade: date
+    validade: str
     cvv: str
 
     @field_validator("numero")
@@ -42,6 +43,21 @@ class NovoCartaoDeCredito(BaseModel):
         if not v.isdigit() or not 3 <= len(v) <= 4:
             raise ValueError("CVV deve conter 3 ou 4 dígitos numéricos.")
         return v
+
+    @field_validator("validade")
+    @classmethod
+    def validar_validade(cls, v):
+        # Aceita "YYYY-MM" e converte para "MM/YYYY"
+        if re.match(r"^\d{4}-\d{2}$", v):
+            ano, mes = v.split("-")
+            return f"{int(mes)}/{ano}"
+        # Aceita "MM/YYYY" ou "M/YYYY"
+        if re.match(r"^\d{1,2}/\d{4}$", v):
+            return v
+        # Aceita "MM/YY" ou "M/YY"
+        if re.match(r"^\d{1,2}/\d{2}$", v):
+            return v
+        raise ValueError("Validade deve estar no formato MM/YYYY, M/YYYY, MM/YY, M/YY ou YYYY-MM")
     
 class CartaoDeCredito(NovoCartaoDeCredito):
     id: int

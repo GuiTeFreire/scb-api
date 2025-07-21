@@ -6,7 +6,7 @@ from app.domain.repositories.funcionario_repository import FuncionarioRepository
 class FakeFuncionarioRepository(FuncionarioRepository):
     def __init__(self):
         self._db: List[Funcionario] = []
-        self._contador = 1
+        self._contador = 12345
 
     def salvar(self, dados: NovoFuncionario) -> Funcionario:
         funcionario = Funcionario(
@@ -34,7 +34,7 @@ class FakeFuncionarioRepository(FuncionarioRepository):
 
     def resetar(self) -> None:
         self._db.clear()
-        self._contador = 1
+        self._contador = 12345
 
     def atualizar(self, id: int, dados: NovoFuncionario) -> Optional[Funcionario]:
         for f in self._db:
