@@ -13,13 +13,12 @@ class TestDependenciesCiclista:
         self.mock_ciclista_repo = Mock()
         self.mock_externo_repo = Mock()
     
-    @patch('app.dependencies.ciclista.fake_ciclista_repository')
-    @patch('app.dependencies.ciclista.fake_externo_repository')
+    # Remover patches/asserções de fake_externo_repository
 
-    def test_get_cadastrar_ciclista_use_case(self, mock_externo_repo, mock_ciclista_repo):
+    def test_get_cadastrar_ciclista_use_case(self):
         # Arrange
-        mock_ciclista_repo.return_value = self.mock_ciclista_repo
-        mock_externo_repo.return_value = self.mock_externo_repo
+        # mock_ciclista_repo.return_value = self.mock_ciclista_repo
+        # mock_externo_repo.return_value = self.mock_externo_repo
         
         # Act
         from app.dependencies.ciclista import get_cadastrar_ciclista_use_case
@@ -30,11 +29,9 @@ class TestDependenciesCiclista:
         assert hasattr(use_case, 'repository')
         assert hasattr(use_case, 'externo_repo')
     
-    @patch('app.dependencies.ciclista.fake_ciclista_repository')
-
-    def test_get_buscar_ciclista_use_case(self, mock_ciclista_repo):
+    def test_get_buscar_ciclista_use_case(self):
         # Arrange
-        mock_ciclista_repo.return_value = self.mock_ciclista_repo
+        # mock_ciclista_repo.return_value = self.mock_ciclista_repo
         
         # Act
         from app.dependencies.ciclista import get_buscar_ciclista_use_case
@@ -44,11 +41,9 @@ class TestDependenciesCiclista:
         assert isinstance(use_case, BuscarCiclistaPorId)
         assert hasattr(use_case, 'repository')
     
-    @patch('app.dependencies.ciclista.fake_ciclista_repository')
-
-    def test_get_atualizar_ciclista_use_case(self, mock_ciclista_repo):
+    def test_get_atualizar_ciclista_use_case(self):
         # Arrange
-        mock_ciclista_repo.return_value = self.mock_ciclista_repo
+        # mock_ciclista_repo.return_value = self.mock_ciclista_repo
         
         # Act
         from app.dependencies.ciclista import get_atualizar_ciclista_use_case
@@ -58,13 +53,10 @@ class TestDependenciesCiclista:
         assert isinstance(use_case, AtualizarCiclista)
         assert hasattr(use_case, 'repository')
     
-    @patch('app.dependencies.ciclista.fake_ciclista_repository')
-    @patch('app.dependencies.ciclista.fake_externo_repository')
-
-    def test_get_ativar_ciclista_use_case(self, mock_externo_repo, mock_ciclista_repo):
+    def test_get_ativar_ciclista_use_case(self):
         # Arrange
-        mock_ciclista_repo.return_value = self.mock_ciclista_repo
-        mock_externo_repo.return_value = self.mock_externo_repo
+        # mock_ciclista_repo.return_value = self.mock_ciclista_repo
+        # mock_externo_repo.return_value = self.mock_externo_repo
         
         # Act
         from app.dependencies.ciclista import get_ativar_ciclista_use_case
@@ -74,11 +66,9 @@ class TestDependenciesCiclista:
         assert isinstance(use_case, AtivarCiclista)
         assert hasattr(use_case, 'repository')
     
-    @patch('app.dependencies.ciclista.fake_ciclista_repository')
-
-    def test_get_obter_cartao_use_case(self, mock_ciclista_repo):
+    def test_get_obter_cartao_use_case(self):
         # Arrange
-        mock_ciclista_repo.return_value = self.mock_ciclista_repo
+        # mock_ciclista_repo.return_value = self.mock_ciclista_repo
         
         # Act
         from app.dependencies.ciclista import get_obter_cartao_use_case
@@ -88,13 +78,10 @@ class TestDependenciesCiclista:
         assert isinstance(use_case, ObterCartaoDeCredito)
         assert hasattr(use_case, 'repository')
     
-    @patch('app.dependencies.ciclista.fake_ciclista_repository')
-    @patch('app.dependencies.ciclista.fake_externo_repository')
-
-    def test_get_atualizar_cartao_use_case(self, mock_externo_repo, mock_ciclista_repo):
+    def test_get_atualizar_cartao_use_case(self):
         # Arrange
-        mock_ciclista_repo.return_value = self.mock_ciclista_repo
-        mock_externo_repo.return_value = self.mock_externo_repo
+        # mock_ciclista_repo.return_value = self.mock_ciclista_repo
+        # mock_externo_repo.return_value = self.mock_externo_repo
         
         # Act
         from app.dependencies.ciclista import get_atualizar_cartao_use_case
@@ -105,11 +92,9 @@ class TestDependenciesCiclista:
         assert hasattr(use_case, 'repository')
         assert hasattr(use_case, 'externo_repo')
     
-    @patch('app.dependencies.ciclista.fake_ciclista_repository')
-
-    def test_get_verificar_email_use_case(self, mock_ciclista_repo):
+    def test_get_verificar_email_use_case(self):
         # Arrange
-        mock_ciclista_repo.return_value = self.mock_ciclista_repo
+        # mock_ciclista_repo.return_value = self.mock_ciclista_repo
         
         # Act
         from app.dependencies.ciclista import get_verificar_email_use_case

@@ -42,7 +42,7 @@ class TestVerificarPermissaoAluguelCenariosAdicionais:
             id=1,
             nomeTitular="João Silva",
             numero="1234567890123456",
-            validade=date(2025, 12, 31),
+            validade="12/2025",
             cvv="123"
         )
         ciclista = Ciclista(
@@ -80,7 +80,7 @@ class TestVerificarPermissaoAluguelCenariosAdicionais:
             id=1,
             nomeTitular="João Silva",
             numero="1234567890123456",
-            validade=date(2025, 12, 31),
+            validade="12/2025",
             cvv="123"
         )
         ciclista = Ciclista(
@@ -119,7 +119,7 @@ class TestVerificarPermissaoAluguelCenariosAdicionais:
             id=1,
             nomeTitular="João Silva",
             numero="1234567890123456",
-            validade=date(2025, 12, 31),
+            validade="12/2025",
             cvv="123"
         )
         ciclista = Ciclista(

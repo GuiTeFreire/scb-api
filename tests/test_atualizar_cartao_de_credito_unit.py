@@ -27,7 +27,7 @@ class TestAtualizarCartaoDeCredito:
         novo_cartao = NovoCartaoDeCredito(
             nomeTitular="João Silva Atualizado",
             numero="4222222222222222",
-            validade=datetime(2025, 12, 31).date(),
+            validade="12/2025",
             cvv="456"
         )
         
@@ -50,7 +50,7 @@ class TestAtualizarCartaoDeCredito:
         assert result is not None
         assert result.nomeTitular == "João Silva Atualizado"
         assert result.numero == "4222222222222222"
-        assert result.validade == datetime(2025, 12, 31).date()
+        assert result.validade == "12/2025"
         assert result.cvv == "456"
     
     def test_execute_ciclista_inexistente(self):
@@ -63,7 +63,7 @@ class TestAtualizarCartaoDeCredito:
         novo_cartao = NovoCartaoDeCredito(
             nomeTitular="Teste",
             numero="4111111111111111",
-            validade=datetime(2025, 12, 31).date(),
+            validade="12/2025",
             cvv="123"
         )
         

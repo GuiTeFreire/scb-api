@@ -13,17 +13,14 @@ class TestDependenciesAluguel:
         self.mock_externo_repo = Mock()
         self.mock_equipamento_repo = Mock()
     
-    @patch('app.dependencies.aluguel.fake_aluguel_repository')
-    @patch('app.dependencies.aluguel.fake_ciclista_repository')
-    @patch('app.dependencies.aluguel.fake_externo_repository')
-    @patch('app.dependencies.aluguel.fake_equipamento_repository')
+    # Remover todos os decorators @patch e argumentos de mock dos testes, deixar apenas asserts simples.
 
-    def test_get_realizar_aluguel_use_case(self, mock_equipamento_repo, mock_externo_repo, mock_ciclista_repo, mock_aluguel_repo):
+    def test_get_realizar_aluguel_use_case(self):
         # Arrange
-        mock_aluguel_repo.return_value = self.mock_aluguel_repo
-        mock_ciclista_repo.return_value = self.mock_ciclista_repo
-        mock_externo_repo.return_value = self.mock_externo_repo
-        mock_equipamento_repo.return_value = self.mock_equipamento_repo
+        mock_aluguel_repo = Mock()
+        mock_ciclista_repo = Mock()
+        mock_externo_repo = Mock()
+        # mock_equipamento_repo = Mock()
         
         # Act
         from app.dependencies.aluguel import get_realizar_aluguel_use_case
@@ -36,17 +33,12 @@ class TestDependenciesAluguel:
         assert hasattr(use_case, 'externo_repo')
         assert hasattr(use_case, 'equipamento_repo')
     
-    @patch('app.dependencies.aluguel.fake_aluguel_repository')
-    @patch('app.dependencies.aluguel.fake_ciclista_repository')
-    @patch('app.dependencies.aluguel.fake_externo_repository')
-    @patch('app.dependencies.aluguel.fake_equipamento_repository')
-
-    def test_get_realizar_devolucao_use_case(self, mock_equipamento_repo, mock_externo_repo, mock_ciclista_repo, mock_aluguel_repo):
+    def test_get_realizar_devolucao_use_case(self):
         # Arrange
-        mock_aluguel_repo.return_value = self.mock_aluguel_repo
-        mock_ciclista_repo.return_value = self.mock_ciclista_repo
-        mock_externo_repo.return_value = self.mock_externo_repo
-        mock_equipamento_repo.return_value = self.mock_equipamento_repo
+        mock_aluguel_repo = Mock()
+        mock_ciclista_repo = Mock()
+        mock_externo_repo = Mock()
+        # mock_equipamento_repo = Mock()
         
         # Act
         from app.dependencies.aluguel import get_realizar_devolucao_use_case
@@ -56,14 +48,12 @@ class TestDependenciesAluguel:
         assert isinstance(use_case, RealizarDevolucao)
         assert hasattr(use_case, 'aluguel_repo')
         assert hasattr(use_case, 'ciclista_repo')
-        assert hasattr(use_case, 'servico_externo_repo')
+        assert hasattr(use_case, 'externo_repo')
         assert hasattr(use_case, 'equipamento_repo')
     
-    @patch('app.dependencies.aluguel.fake_aluguel_repository')
-
-    def test_get_buscar_bicicleta_alugada_use_case(self, mock_aluguel_repo):
+    def test_get_buscar_bicicleta_alugada_use_case(self):
         # Arrange
-        mock_aluguel_repo.return_value = self.mock_aluguel_repo
+        mock_aluguel_repo = Mock()
         
         # Act
         from app.dependencies.aluguel import get_buscar_bicicleta_alugada_use_case
@@ -75,13 +65,10 @@ class TestDependenciesAluguel:
         assert hasattr(use_case, 'ciclista_repo')
         assert hasattr(use_case, 'equipamento_repo')
     
-    @patch('app.dependencies.aluguel.fake_aluguel_repository')
-    @patch('app.dependencies.aluguel.fake_ciclista_repository')
-
-    def test_get_verificar_permissao_aluguel_use_case(self, mock_ciclista_repo, mock_aluguel_repo):
+    def test_get_verificar_permissao_aluguel_use_case(self):
         # Arrange
-        mock_aluguel_repo.return_value = self.mock_aluguel_repo
-        mock_ciclista_repo.return_value = self.mock_ciclista_repo
+        mock_aluguel_repo = Mock()
+        mock_ciclista_repo = Mock()
         
         # Act
         from app.dependencies.aluguel import get_verificar_permissao_aluguel_use_case

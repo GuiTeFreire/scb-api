@@ -39,7 +39,7 @@ class TestCadastrarCiclista:
             meioDePagamento={
                 "nomeTitular": "João Silva",
                 "numero": "4111111111111111",
-                "validade": date(2025, 12, 31),
+                "validade": "12/2025",
                 "cvv": "123"
             }
         )
@@ -73,7 +73,7 @@ class TestCadastrarCiclista:
             meioDePagamento={
                 "nomeTitular": "João Silva",
                 "numero": "4111111111111111",
-                "validade": date(2025, 12, 31),
+                "validade": "12/2025",
                 "cvv": "123"
             }
         )
@@ -99,7 +99,7 @@ class TestCadastrarCiclista:
             meioDePagamento={
                 "nomeTitular": "João Silva",
                 "numero": "4111111111111111",
-                "validade": date(2025, 12, 31),
+                "validade": "12/2025",
                 "cvv": "123"
             }
         )
@@ -126,7 +126,7 @@ class TestCadastrarCiclista:
             meioDePagamento={
                 "nomeTitular": "João Silva",
                 "numero": "4111111111111111",
-                "validade": date(2025, 12, 31),
+                "validade": "12/2025",
                 "cvv": "123"
             }
         )
@@ -157,7 +157,7 @@ class TestCadastrarCiclista:
             meioDePagamento={
                 "nomeTitular": "João Silva",
                 "numero": "4111111111111111",
-                "validade": date(2025, 12, 31),
+                "validade": "12/2025",
                 "cvv": "123"
             }
         )
@@ -194,7 +194,7 @@ class TestCadastrarCiclista:
             meioDePagamento={
                 "nomeTitular": "John Smith",
                 "numero": "4111111111111111",
-                "validade": date(2025, 12, 31),
+                "validade": "12/2025",
                 "cvv": "123"
             }
         )

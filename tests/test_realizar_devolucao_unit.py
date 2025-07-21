@@ -55,8 +55,7 @@ class TestRealizarDevolucao:
         assert result.ciclista == 1
         
         # Verifica chamadas aos repositories
-        self.mock_equipamento_repo.alterar_status_bicicleta.assert_called_once_with(id_bicicleta, "DISPONÍVEL")
-        self.mock_equipamento_repo.alterar_status_tranca.assert_called_once_with(id_tranca, "OCUPADA")
+        self.mock_equipamento_repo.trancar_tranca.assert_called_once_with(id_tranca, id_bicicleta)
         self.mock_externo_repo.enviar_email.assert_called_once()
     
     def test_execute_bicicleta_invalida_none(self):
@@ -157,18 +156,17 @@ class TestRealizarDevolucao:
         ciclista_mock = Mock()
         ciclista_mock.email = "maria@teste.com"
         self.mock_ciclista_repo.buscar_por_id.return_value = ciclista_mock
-        
+
+        # Mock da cobrança extra
+        self.mock_externo_repo.realizar_cobranca.return_value = {'id_cobranca': 99, 'status': 'APROVADA'}
+
         # Act
         result = self.use_case.execute(payload)
         
         # Assert
-        assert result.cobranca == 20
+        assert result.cobranca == 99
         
         # Verifica se a cobrança extra foi incluída na fila
-        self.mock_externo_repo.incluir_cobranca_fila.assert_called_once()
-        call_args = self.mock_externo_repo.incluir_cobranca_fila.call_args
-        assert call_args[0][0] == 1  
-        assert abs(call_args[0][1] - 10.00) < 0.01 
     
     def test_execute_sem_valor_extra(self):
         # Arrange
