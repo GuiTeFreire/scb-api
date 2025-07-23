@@ -8,7 +8,7 @@ class TestIntegrationRealizarAluguel:
     def test_realizar_aluguel_sucesso(self):
         payload = {
             "ciclista": 1,
-            "trancaInicio": 2
+            "trancaInicio": 1
         }
         response = httpx.post(self.BASE_URL, json=payload, timeout=10)
         assert response.status_code in (200, 201)

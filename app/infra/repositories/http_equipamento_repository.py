@@ -33,11 +33,10 @@ class HttpEquipamentoRepository(EquipamentoRepository):
         return None
 
     def trancar_tranca(self, id_tranca, id_bicicleta):
-        url = f"{self.base_url}/api/trancas/{id_tranca}/trancar"
+        url = f"{self.base_url}/api/tranca/{id_tranca}/trancar"
         response = httpx.post(url, json={"idBicicleta": id_bicicleta})
         return response.status_code == 200
 
     def destrancar_tranca(self, id_tranca):
-        url = f"{self.base_url}/api/trancas/{id_tranca}/destrancar"
-        response = httpx.post(url)
+        response = httpx.post(f"{self.base_url}/api/tranca/{id_tranca}/destrancar")
         return response.status_code == 200 

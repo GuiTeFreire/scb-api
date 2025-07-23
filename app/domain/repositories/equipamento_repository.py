@@ -22,3 +22,11 @@ class EquipamentoRepository(ABC):
     @abstractmethod
     def obter_bicicleta_na_tranca(self, id_tranca: int) -> Optional[Dict[str, Any]]:
         pass 
+
+    @abstractmethod
+    def destrancar_tranca(self, id_tranca: int) -> bool:
+        pass 
+
+    @abstractmethod
+    def trancar_tranca(self, id_tranca: int, id_bicicleta: int) -> bool:
+        pass 
