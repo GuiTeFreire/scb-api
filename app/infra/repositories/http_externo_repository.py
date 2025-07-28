@@ -29,4 +29,8 @@ class HttpExternoRepository(ExternoRepository):
     def enviar_email(self, email, assunto, mensagem):
         payload = {"email": email, "assunto": assunto, "mensagem": mensagem}
         response = httpx.post(f"{self.base_url}/enviarEmail", json=payload)
-        return response.json() 
+        return response.json()
+
+    def restaurar_dados(self):
+        response = httpx.get(f"{self.base_url}/restaurarDados")
+        return response.status_code == 200 

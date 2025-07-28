@@ -14,7 +14,7 @@ class RestaurarBanco:
         self.funcionario_repo = funcionario_repo
         self.ciclista_repo = ciclista_repo
         self.aluguel_repo = aluguel_repo
-
+    
     def execute(self):
         self.funcionario_repo.resetar()
         self.ciclista_repo.resetar()
@@ -45,11 +45,13 @@ class RestaurarBanco:
             validade="12/2022",
             cvv="132"
         )
+        nomeCiclistas="Fulano Beltrano"
+
         ciclistas = [
             Ciclista(
                 id=1,
                 status=StatusEnum.ATIVO,
-                nome="Fulano Beltrano",
+                nome=nomeCiclistas,
                 nascimento=date(2021,5,2),
                 cpf="78804034009",
                 nacionalidade="Brasileiro",
@@ -60,7 +62,7 @@ class RestaurarBanco:
             Ciclista(
                 id=2,
                 status=StatusEnum.AGUARDANDO_CONFIRMACAO,
-                nome="Fulano Beltrano",
+                nome=nomeCiclistas,
                 nascimento=date(2021,5,2),
                 cpf="43943488039",
                 nacionalidade="Brasileiro",
@@ -71,7 +73,7 @@ class RestaurarBanco:
             Ciclista(
                 id=3,
                 status=StatusEnum.ATIVO,
-                nome="Fulano Beltrano",
+                nome=nomeCiclistas,
                 nascimento=date(2021,5,2),
                 cpf="10243164084",
                 nacionalidade="Brasileiro",
@@ -82,7 +84,7 @@ class RestaurarBanco:
             Ciclista(
                 id=4,
                 status=StatusEnum.ATIVO,
-                nome="Fulano Beltrano",
+                nome=nomeCiclistas,
                 nascimento=date(2021,5,2),
                 cpf="30880150017",
                 nacionalidade="Brasileiro",

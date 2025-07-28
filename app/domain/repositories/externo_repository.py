@@ -18,3 +18,7 @@ class ExternoRepository(ABC):
     @abstractmethod
     def enviar_email(self, email: str, assunto: str, mensagem: str) -> Dict[str, Any]:
         pass 
+    
+    @abstractmethod
+    def restaurar_dados(self) -> bool:
+        pass 

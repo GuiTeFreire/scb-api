@@ -30,3 +30,7 @@ class EquipamentoRepository(ABC):
     @abstractmethod
     def trancar_tranca(self, id_tranca: int, id_bicicleta: int) -> bool:
         pass 
+
+    @abstractmethod
+    def restaurar_dados(self) -> bool:
+        pass 

@@ -3,7 +3,7 @@ import httpx
 
 @pytest.mark.integration
 class TestIntegrationRealizarAluguel:
-    BASE_URL = "http://localhost:8000/aluguel"
+    BASE_URL = "https://scb-api-g8jr.onrender.com/aluguel"
 
     def test_realizar_aluguel_sucesso(self):
         payload = {
