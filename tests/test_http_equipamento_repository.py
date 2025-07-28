@@ -17,7 +17,7 @@ class TestHttpEquipamentoRepository:
         result = self.repo.obter_bicicleta(1)
         
         assert result == {"id": 1, "status": "DISPONIVEL"}
-        mock_get.assert_called_once_with(f"{self.repo.base_url}/bicicletas/1")
+        mock_get.assert_called_once_with(f"{self.repo.base_url}/bicicleta/1")
     
     @patch('httpx.get')
     def test_obter_bicicleta_nao_encontrada(self, mock_get):
@@ -39,7 +39,7 @@ class TestHttpEquipamentoRepository:
         result = self.repo.obter_tranca(1)
         
         assert result == {"id": 1, "status": "DISPONIVEL"}
-        mock_get.assert_called_once_with(f"{self.repo.base_url}/trancas/1")
+        mock_get.assert_called_once_with(f"{self.repo.base_url}/tranca/1")
     
     @patch('httpx.get')
     def test_obter_tranca_nao_encontrada(self, mock_get):
@@ -60,7 +60,7 @@ class TestHttpEquipamentoRepository:
         result = self.repo.alterar_status_bicicleta(1, "OCUPADA")
         
         assert result is True
-        mock_post.assert_called_once_with(f"{self.repo.base_url}/bicicletas/1/status/OCUPADA")
+        mock_post.assert_called_once_with(f"{self.repo.base_url}/bicicleta/1/status/OCUPADA")
     
     @patch('httpx.post')
     def test_alterar_status_bicicleta_falha(self, mock_post):
@@ -81,7 +81,7 @@ class TestHttpEquipamentoRepository:
         result = self.repo.alterar_status_tranca(1, "OCUPADA")
         
         assert result is True
-        mock_post.assert_called_once_with(f"{self.repo.base_url}/trancas/1/status/OCUPADA")
+        mock_post.assert_called_once_with(f"{self.repo.base_url}/tranca/1/status/OCUPADA")
     
     @patch('httpx.post')
     def test_alterar_status_tranca_falha(self, mock_post):
@@ -103,7 +103,7 @@ class TestHttpEquipamentoRepository:
         result = self.repo.obter_bicicleta_na_tranca(1)
         
         assert result == {"id": 1, "status": "OCUPADA"}
-        mock_get.assert_called_once_with(f"{self.repo.base_url}/trancas/1/bicicleta")
+        mock_get.assert_called_once_with(f"{self.repo.base_url}/tranca/1/bicicleta")
     
     @patch('httpx.get')
     def test_obter_bicicleta_na_tranca_nao_encontrada(self, mock_get):

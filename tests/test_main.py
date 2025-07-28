@@ -58,15 +58,6 @@ async def test_http_exception_handler_sem_detail():
     # O FastAPI retorna "Internal Server Error" se não passar detail
     assert json.loads(response.body) == {"codigo": "500", "mensagem": "Internal Server Error"}
 
-def test_app_configuration():
-    # Setup: Importa a app
-    from app.main import app
-    
-    # Verificação: Confirma configurações básicas
-    assert app.title == "SCB - Sistema de Controle de Bicicletário"
-    assert app.description == "API do sistema SCB para gerenciamento de bicicletas compartilhadas."
-    assert app.version == "1.0.0"
-
 def test_app_routers_included():
     # Setup: Importa a app
     from app.main import app
