@@ -7,27 +7,27 @@ class HttpEquipamentoRepository(EquipamentoRepository):
         self.base_url = os.getenv("EQUIPAMENTO_URL", "http://localhost:8001")
 
     def obter_bicicleta(self, id_bicicleta):
-        response = httpx.get(f"{self.base_url}/bicicletas/{id_bicicleta}")
+        response = httpx.get(f"{self.base_url}/bicicleta/{id_bicicleta}")
         if response.status_code == 200:
             return response.json()
         return None
 
     def obter_tranca(self, id_tranca):
-        response = httpx.get(f"{self.base_url}/trancas/{id_tranca}")
+        response = httpx.get(f"{self.base_url}/tranca/{id_tranca}")
         if response.status_code == 200:
             return response.json()
         return None
 
     def alterar_status_bicicleta(self, id_bicicleta, status):
-        response = httpx.post(f"{self.base_url}/bicicletas/{id_bicicleta}/status/{status}")
+        response = httpx.post(f"{self.base_url}/bicicleta/{id_bicicleta}/status/{status}")
         return response.status_code == 200
 
     def alterar_status_tranca(self, id_tranca, status):
-        response = httpx.post(f"{self.base_url}/trancas/{id_tranca}/status/{status}")
+        response = httpx.post(f"{self.base_url}/tranca/{id_tranca}/status/{status}")
         return response.status_code == 200
 
     def obter_bicicleta_na_tranca(self, id_tranca):
-        response = httpx.get(f"{self.base_url}/trancas/{id_tranca}/bicicleta")
+        response = httpx.get(f"{self.base_url}/tranca/{id_tranca}/bicicleta")
         if response.status_code == 200:
             return response.json()
         return None

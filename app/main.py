@@ -6,8 +6,8 @@ from dotenv import load_dotenv
 load_dotenv()
 
 app = FastAPI(
-    title="SCB - Sistema de Controle de Bicicletário",
-    description="API do sistema SCB para gerenciamento de bicicletas compartilhadas.",
+    title="SCB - Sistema de Controle de Bicicletário - Microsserviço Aluguel",
+    description="Microsserviço Aluguel para a API do sistema SCB para gerenciamento de bicicletas compartilhadas.",
     version="1.0.0"
 )
 
