@@ -4,7 +4,7 @@ from datetime import date
 
 @pytest.mark.integration
 class TestIntegrationCadastrarCiclista:
-    BASE_URL = "http://localhost:8000/ciclista"
+    BASE_URL = "https://scb-api-g8jr.onrender.com/ciclista"
 
     def test_cadastro_ciclista_sucesso(self):
         payload = {

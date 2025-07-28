@@ -45,13 +45,13 @@ class RestaurarBanco:
             validade="12/2022",
             cvv="132"
         )
-        nomeCiclistas="Fulano Beltrano"
+        nome_ciclistas="Fulano Beltrano"
 
         ciclistas = [
             Ciclista(
                 id=1,
                 status=StatusEnum.ATIVO,
-                nome=nomeCiclistas,
+                nome=nome_ciclistas,
                 nascimento=date(2021,5,2),
                 cpf="78804034009",
                 nacionalidade="Brasileiro",
@@ -62,7 +62,7 @@ class RestaurarBanco:
             Ciclista(
                 id=2,
                 status=StatusEnum.AGUARDANDO_CONFIRMACAO,
-                nome=nomeCiclistas,
+                nome=nome_ciclistas,
                 nascimento=date(2021,5,2),
                 cpf="43943488039",
                 nacionalidade="Brasileiro",
@@ -73,7 +73,7 @@ class RestaurarBanco:
             Ciclista(
                 id=3,
                 status=StatusEnum.ATIVO,
-                nome=nomeCiclistas,
+                nome=nome_ciclistas,
                 nascimento=date(2021,5,2),
                 cpf="10243164084",
                 nacionalidade="Brasileiro",
@@ -84,7 +84,7 @@ class RestaurarBanco:
             Ciclista(
                 id=4,
                 status=StatusEnum.ATIVO,
-                nome=nomeCiclistas,
+                nome=nome_ciclistas,
                 nascimento=date(2021,5,2),
                 cpf="30880150017",
                 nacionalidade="Brasileiro",
